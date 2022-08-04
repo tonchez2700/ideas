@@ -1,0 +1,53 @@
+[{
+    "id": 1,
+    "icon": "user-friends",
+    "title": "Prospectos",
+    "data": [
+        {
+            "id": 1,
+            "name": "Persona 1",
+            "title": "Prospecto 1"
+        }
+    ]
+},
+{
+    "id": 2,
+    "icon": "mobile-alt",
+    "title": "Llamadas",
+    "data": [
+        {
+            "id": 1,
+            "name": "Persona 1",
+            "title": "Llamada 1"
+        }
+    ]
+},
+{
+    "id": 3,
+    "icon": "calendar-alt",
+    "title": "Citas",
+    "data": [
+        {
+            "id": 1,
+            "name": "Persona 1",
+            "title": "Cita 1"
+        }
+    ]
+},
+{
+    "id": 4,
+    "icon": "file-contract",
+    "title": "Solicitudes",
+    "data": [
+        {
+            "id": 1,
+            "name": "Persona 1",
+            "title": "Solicitud 1"
+        },
+        {
+            "id": 2,
+            "name": "Persona 2",
+            "title": "Solicitud 2"
+        }
+    ]
+}]

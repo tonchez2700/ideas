@@ -1,0 +1,1 @@
+export const BASE_URL='https://development.ideas.zunit.mx/api';

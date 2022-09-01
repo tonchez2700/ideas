@@ -6,36 +6,39 @@ import listClients from '../../helpers/data/listClients.json'
 
 import { colors, general } from '../../theme/customTheme';
 
-export const CustomTable = () => {
+export const CustomTable = ({ data } : any) => {
+
+    let total = 0;
 
     return (
         <View>
-            { listClients !== null && listClients !== undefined
+            { data !== null && data !== undefined
                 &&
                 <View>
-                    { listClients.map((el: any, i) => (
-                        <View key={ i } style={[ styles.item_card, general.global_margin ]}>
+                    {data.map((el: any, i: number) => {
+                        total+= el.points
+                        return (<View key={ i } style={[ styles.item_card, general.global_margin ]}>
                             <View style={{ alignItems: 'center', flex: 1, flexDirection: 'row', height: '100%' }}>
                                 <View style={ styles.icon_container }>
-                                    <Icon color={ colors.primary } name={ el.icon } size={ 30 } />
+                                    <Icon color={ colors.primary } name="file-contract" size={ 30 } />
                                 </View>
                                 <View style={{ alignContent: 'center', flex: 1, paddingHorizontal: 24 }}>
                                     <Text style={ styles.info_title }>
-                                        { el.title }
+                                        { el.name }
                                     </Text>
                                 </View>
                                 <View style={ styles.info_container }>
-                                    <Text style={ styles.info_middle }>15</Text>
-                                    <Text style={[ styles.info_title, styles.text_right ]}>15 pts</Text>
+                                    <Text style={ styles.info_middle }>{ el.amount }</Text>
+                                    <Text style={[ styles.info_title, styles.text_right ]}>{ el.points } pts</Text>
                                 </View>
                             </View>
-                        </View> 
-                    ))}
+                        </View>)
+                    })}
                 </View>
             }
             <View style={[ general.global_margin, styles.info_container, { alignSelf: 'flex-end', paddingVertical: 15, }]}>
                 <Text style={[ styles.info_title, { width: 125 }]}>Puntaje Total</Text>
-                <Text style={[ styles.info_title, styles.text_right ]}>365 pts</Text>
+                <Text style={[ styles.info_title, styles.text_right ]}>{total} pts</Text>
             </View>
         </View>
     );

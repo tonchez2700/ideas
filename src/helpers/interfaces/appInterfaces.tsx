@@ -101,3 +101,9 @@ export interface ArticleResponse {
     created_at:             Date;
     updated_at:             Date;
 }
+
+export interface BinnacleResponse {
+    name:                   string;
+    amount:                 number;
+    points:                 number;
+}

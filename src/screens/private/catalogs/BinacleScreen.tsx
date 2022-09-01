@@ -1,18 +1,19 @@
-import React, { useCallback, useState } from 'react';
-import { KeyboardAvoidingView, Platform, View } from 'react-native';
-
-import useForm from '../../../hooks/useForm';
+import React, { useContext, useState, useEffect } from 'react';
+import { KeyboardAvoidingView, Platform, View, ActivityIndicator } from 'react-native';
 
 import { CustomHeader } from '../../../components/Layout/CustomHeader';
 import { CustomTable } from '../../../components/FlatList/CustomTable';
-import CustomInput from '../../../components/CustomInput';
 
+import { BinnacleContext } from '../../../context/BinnacleContext';
 import { general } from '../../../theme/customTheme';
 import { Navigation } from '../../../helpers/interfaces/appInterfaces';
 
 const BinacleScreen = ({ navigation }: Navigation) => {
-    const [binacles, setBinacles] = useState<any>();
-    const navegacion = navigation;
+    const { binnacleList, fetchBinnacle } = useContext(BinnacleContext);
+
+    useEffect(() => {
+        fetchBinnacle()
+    }, [])
     
     return (
         <KeyboardAvoidingView
@@ -25,7 +26,12 @@ const BinacleScreen = ({ navigation }: Navigation) => {
                 title='BITÁCORA'
             />
             <View style={ general.fullScreen }>
-                <CustomTable />
+                {
+                    binnacleList.length > 0
+                    ? <CustomTable data={binnacleList} />
+                    : <ActivityIndicator size="small" color="#0000ff" />
+                }
+                
             </View>
         </KeyboardAvoidingView>
     )

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import ideasApi from '../api/ideasApi';
 import { AuthContext } from './AuthContext';
 
@@ -7,7 +8,7 @@ import { AgentData, ProspectsResponse } from '../helpers/interfaces/appInterface
 
 type ProspectsContextProps = {
     prospects: ProspectsResponse[];
-    loadProspects: (agentId: number) => Promise<void>;
+    loadProspects: () => Promise<void>;
     addProspect: (AgentData: AgentData) => Promise<void>;
     updateProspect: (id: number, name: string, first_name: string, second_surname: string, phone: number, agentId: number) => Promise<void>;
     deleteProspect: (id: number) => Promise<void>;
@@ -24,22 +25,25 @@ export const ProspectsProvider = ({ children }: any ) => {
 
     useEffect(() => {
         if(user !== null) {
-            loadProspects(agentId);
+            loadProspects();
         }
     }, [prospects])
 
-    const loadProspects = async(agentId: number) => {
-        const resp: any = await ideasApi.get<ProspectsResponse>('/prospects', {
-            params: { agent_id: agentId }
+    const loadProspects = async() => {
+        const localStorage = await AsyncStorage.getItem('userIdeas');
+        const user = localStorage != null ? JSON.parse(localStorage) : null
+        const resp: any = await ideasApi.get<ProspectsResponse>(`/prospects`, {
+            params: { agent_id: user.id }
         });
         setProspects(resp.data);
     }
 
     const addProspect = async({ name, first_name, second_surname, phone, agent_id }: AgentData) => {
         try {
-            const resp: any = await ideasApi.post<ProspectsResponse>('/prospects', { name, first_name, second_surname, phone, agent_id })
+            const localStorage = await AsyncStorage.getItem('userIdeas');
+            const user = localStorage != null ? JSON.parse(localStorage) : null
+            const resp: any = await ideasApi.post<ProspectsResponse>('/prospects', { name, first_name, second_surname, phone, agent_id: user.id })
             setProspects([...prospects, resp.data])
-            console.log('Si paso')
         } catch(error: any) {
             console.log(error)
         }

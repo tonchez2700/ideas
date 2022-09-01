@@ -6,13 +6,16 @@ import StackNavigator from './src/navigation/StackNavigator';
 import { AuthProvider } from './src/context/AuthContext';
 import { ProspectsProvider } from './src/context/ProspectsContext';
 import { ScheduleProvider } from './src/context/ScheduleContext';
+import { BinnacleProvider } from './src/context/BinnacleContext';
 
 const AppState = ({ children }: any) => {
     return (
         <AuthProvider>
             <ProspectsProvider>
                 <ScheduleProvider>
-                    { children }
+                    <BinnacleProvider>
+                        { children }
+                    </BinnacleProvider>
                 </ScheduleProvider>
             </ProspectsProvider>
         </AuthProvider>

@@ -107,3 +107,14 @@ export interface BinnacleResponse {
     amount:                 number;
     points:                 number;
 }
+
+export interface PolicyTypeResponse {
+    id:                   string;
+    name:                 string;
+    notes:                number;
+    is_active:            number;
+    created_by:           number;
+    updated_by:           number;
+    created_at:           number;
+    updated_at:           number;
+}

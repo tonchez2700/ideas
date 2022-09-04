@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { KeyboardAvoidingView, Platform, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Card } from 'react-native-paper';
 import { Agenda } from 'react-native-calendars';
@@ -7,6 +7,7 @@ import { Agenda } from 'react-native-calendars';
 import { CustomHeader } from '../../components/Layout/CustomHeader';
 import useFetch from '../../hooks/useFetch';
 
+import { ScheduleContext } from '../../context/ScheduleContext';
 import { Navigation } from '../../helpers/interfaces/appInterfaces';
 import { colors, general } from '../../theme/customTheme';
 
@@ -16,10 +17,9 @@ const timeToString = (time: any) => {
 };
 
 const ScheduleScreen = ({ navigation }: Navigation) => {
+    const { isFetching, handleUpdateScheduleStatus } = useContext(ScheduleContext);
     const [items, setItems] = useState<any>([]);
     const { response } = useFetch('/appointments', 'GET', { agent_id: 1 })
-
-    console.log(response)
 
     const loadItems = (day: any) => {
         setTimeout(() => {
@@ -31,6 +31,7 @@ const ScheduleScreen = ({ navigation }: Navigation) => {
                     const numItems = Math.floor(Math.random() * 3 + 1);
                     for(let j = 0; j < numItems; j++) {
                         items[strTime].push({
+                            id: 4,
                             name: 'Lorem ' + strTime + ' #' + j,
                             height: Math.max(50, Math.floor(Math.random() * 150)),
                         });
@@ -48,10 +49,7 @@ const ScheduleScreen = ({ navigation }: Navigation) => {
     const renderItem = (item: any) => {
         return (
             <View style={{ marginHorizontal: 30 }}>
-                <TouchableOpacity
-                    activeOpacity={ colors.opacity}
-                    style={{ marginVertical: 10, }}
-                >
+                <View style={{ marginVertical: 10 }}>
                     <Card style={{ backgroundColor: '#B2E1FF' }}>
                         <Card.Content>
                             <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -67,17 +65,21 @@ const ScheduleScreen = ({ navigation }: Navigation) => {
                                         <Text style={{ color: colors.primary, fontWeight: 'bold', fontSize: 7, marginLeft: 8, }}>Hola</Text>
                                     </View>
                                 </View>
-                                <View>
+                                <TouchableOpacity
+                                    onPress={() => handleUpdateScheduleStatus(item.id)}
+                                    activeOpacity={ colors.opacity}
+                                    style={{ marginVertical: 10, }}
+                                >
                                     <Icon
                                         size={ 20 }
                                         name='event-available'
                                         color={ colors.primary }
                                     />
-                                </View>
+                                </TouchableOpacity>
                             </View>
                         </Card.Content>
                     </Card>
-                </TouchableOpacity>
+                </View>
             </View>
         )
     }
@@ -92,13 +94,17 @@ const ScheduleScreen = ({ navigation }: Navigation) => {
                 navigation={ navigation }
                 title='AGENDA'
             />
-
-            <Agenda
-                hideKnob
-                items={ items }
-                loadItemsForMonth={ loadItems }
-                renderItem={ renderItem }
-            />
+            {
+                isFetching
+                ?   <ActivityIndicator size="small" color="#0000ff" />
+                :   <Agenda
+                        hideKnob
+                        items={ items }
+                        loadItemsForMonth={ loadItems }
+                        renderItem={ renderItem }
+                    />
+            }
+            
         </KeyboardAvoidingView>
     )
 }

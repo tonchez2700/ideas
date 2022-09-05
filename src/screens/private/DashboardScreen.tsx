@@ -35,10 +35,7 @@ const DashboardScreen = ({ navigation }: Navigation) => {
                 navigation={ navigation }
             />
 
-            <ScrollView
-                showsVerticalScrollIndicator={ false }
-                style={ general.global_margin }
-            >
+            <View style={ general.global_margin }>
                 <View style={ styles.container_card }>
                     <Text style={ styles.subtitle }>CONOCE TU PROGRESO</Text>
                     <Text style={ styles.subtitle }>INSIGNIAS</Text>
@@ -111,7 +108,7 @@ const DashboardScreen = ({ navigation }: Navigation) => {
                     keyExtractor={ item => item.id }
                     showsVerticalScrollIndicator={ false }
                 />
-            </ScrollView>
+            </View>
         </KeyboardAvoidingView>
     )
 }

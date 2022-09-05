@@ -17,7 +17,7 @@ const timeToString = (time: any) => {
 };
 
 const ScheduleScreen = ({ navigation }: Navigation) => {
-    const { isFetching, handleUpdateScheduleStatus } = useContext(ScheduleContext);
+    const { fetching, handleUpdateScheduleStatus } = useContext(ScheduleContext);
     const [items, setItems] = useState<any>([]);
     const { response } = useFetch('/appointments', 'GET', { agent_id: 1 })
 
@@ -95,7 +95,7 @@ const ScheduleScreen = ({ navigation }: Navigation) => {
                 title='AGENDA'
             />
             {
-                isFetching
+                fetching
                 ?   <ActivityIndicator size="small" color="#0000ff" />
                 :   <Agenda
                         hideKnob

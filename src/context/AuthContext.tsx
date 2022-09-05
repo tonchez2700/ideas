@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { AuthReducer, AuthState } from '../reducers/authReducer';
+import { AuthReducer, AuthState } from '../reducers/AuthReducer';
 
 import ideasApi from '../api/ideasApi';
 import { LoginResponse, LoginData, RefreshTokenResponse, User } from '../helpers/interfaces/appInterfaces';

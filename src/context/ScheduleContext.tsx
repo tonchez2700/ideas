@@ -30,7 +30,6 @@ export const ScheduleProvider = ({ children }: any ) => {
             loadSchedule(agentId);
         }
     }, [])
-    console.log(appointments)
 
     const loadSchedule = async(agentId: number) => {
         const resp: any = await ideasApi.get<ScheduleResponse>('/appointments', {
@@ -43,7 +42,6 @@ export const ScheduleProvider = ({ children }: any ) => {
         try {
             const resp: any = await ideasApi.post<ScheduleResponse>('/appointments', { agent_id })
             setAppointments([...appointments, resp.data])
-            console.log('Si paso')
         } catch(error: any) {
             console.log(error)
         }

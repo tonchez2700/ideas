@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { KeyboardAvoidingView, Platform, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Card } from 'react-native-paper';
@@ -17,34 +17,16 @@ const timeToString = (time: any) => {
 };
 
 const ScheduleScreen = ({ navigation }: Navigation) => {
-    const { fetching, handleUpdateScheduleStatus } = useContext(ScheduleContext);
-    const [items, setItems] = useState<any>([]);
-    const { response } = useFetch('/appointments', 'GET', { agent_id: 1 })
+    const { 
+        agenda,
+        fetching,
+        fetchAppointments, 
+        handleUpdateScheduleStatus 
+    } = useContext(ScheduleContext);
 
-    const loadItems = (day: any) => {
-        setTimeout(() => {
-            for(let i = -15; i < 85; i++) {
-                const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-                const strTime: any = timeToString(time);
-                if(!items[strTime]) {
-                    items[strTime] = [];
-                    const numItems = Math.floor(Math.random() * 3 + 1);
-                    for(let j = 0; j < numItems; j++) {
-                        items[strTime].push({
-                            id: 4,
-                            name: 'Lorem ' + strTime + ' #' + j,
-                            height: Math.max(50, Math.floor(Math.random() * 150)),
-                        });
-                    }
-                }
-            }
-            const newItems: any = {};
-            Object.keys(items).forEach((key) => {
-                newItems[key] = items[key];
-            });
-            setItems(newItems);
-        }, 1000);
-    };
+    useEffect(() => {
+        fetchAppointments()
+    }, [])
 
     const renderItem = (item: any) => {
         return (
@@ -62,18 +44,20 @@ const ScheduleScreen = ({ navigation }: Navigation) => {
                                             name='schedule'
                                             color={ colors.primary }
                                         />
-                                        <Text style={{ color: colors.primary, fontWeight: 'bold', fontSize: 7, marginLeft: 8, }}>Hola</Text>
+                                        <Text style={{ color: colors.primary, fontWeight: 'bold', fontSize: 7, marginLeft: 8, }}>{item.appointment_hour}</Text>
                                     </View>
                                 </View>
                                 <TouchableOpacity
+                                    disabled={ item.is_done === 1 ? true : false }
                                     onPress={() => handleUpdateScheduleStatus(item.id)}
                                     activeOpacity={ colors.opacity}
                                     style={{ marginVertical: 10, }}
+                                    
                                 >
                                     <Icon
                                         size={ 20 }
                                         name='event-available'
-                                        color={ colors.primary }
+                                        color={ item.is_done ? colors.primary : colors.gray_opacity }
                                     />
                                 </TouchableOpacity>
                             </View>
@@ -99,8 +83,7 @@ const ScheduleScreen = ({ navigation }: Navigation) => {
                 ?   <ActivityIndicator size="small" color="#0000ff" />
                 :   <Agenda
                         hideKnob
-                        items={ items }
-                        loadItemsForMonth={ loadItems }
+                        items={ agenda.schedules }
                         renderItem={ renderItem }
                     />
             }

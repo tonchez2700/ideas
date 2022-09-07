@@ -1,24 +1,61 @@
-import React, { useReducer, createContext, useContext, useEffect, useState } from 'react';
+import React, { useReducer, createContext } from 'react';
 
 import ideasApi from '../api/ideasApi';
-import { AuthContext } from './AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScheduleReducer, ScheduleState } from '../reducers/ScheduleReducer';
 
-import { ScheduleData, ScheduleResponse } from '../helpers/interfaces/appInterfaces';
+import { ScheduleResponse } from '../helpers/interfaces/appInterfaces';
+import { AgendaScheduleDataType, AgendaDataType } from '../helpers/interfaces/appTypes';
+import { getAgendaScheduleFormatByAppointmentsResponse } from '../helpers/tools';
 
 type ScheduleContextProps = {
+    agenda: AgendaDataType,
     fetching: boolean,
+    fetchAppointments: () => Promise<void>; // TODO: cambiar ANY
     handleUpdateScheduleStatus: (id_agenda: number) => Promise<void>; // TODO: cambiar ANY
 }
 
 const scheduleInitialState: ScheduleState = {
+    error: false,
     fetching: false,
+    appointments: [],
+    message: '',
+    agenda: {
+        schedules: {}
+    },
 }
 
 export const ScheduleContext = createContext({} as ScheduleContextProps);
 
 export const ScheduleProvider = ({ children }: any ) => {
     const [state, dispatch] = useReducer(ScheduleReducer, scheduleInitialState);
+
+    const fetchAppointments = async() => {
+        try {
+            const localStorage = await AsyncStorage.getItem('userIdeas');
+            const user = localStorage != null ? JSON.parse(localStorage) : null
+            const { data }: any = await ideasApi.get<ScheduleResponse>(`/appointments`, {
+                params: { agent_id: user.id }
+            });
+            if(data.length > 0){
+                const schedules: AgendaScheduleDataType = getAgendaScheduleFormatByAppointmentsResponse(data)
+                dispatch({
+                    type: 'schedule/set_appointments',
+                    payload: { 
+                        appointments: data,
+                        agenda: { schedules }
+                    }
+                });
+            }else{
+                throw "No se encontraron tareas disponibles."
+            }
+        } catch (e) {
+            dispatch({
+                type: 'schedule/set_error',
+                payload: { message: e }
+            });
+        }
+    }
 
     const handleUpdateScheduleStatus = async(id_agenda: number) => {
         try {
@@ -43,7 +80,8 @@ export const ScheduleProvider = ({ children }: any ) => {
     return (
         <ScheduleContext.Provider value={{
             ...state,
-            handleUpdateScheduleStatus
+            fetchAppointments,
+            handleUpdateScheduleStatus,
         }}>
             { children }
         </ScheduleContext.Provider>

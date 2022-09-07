@@ -78,6 +78,7 @@ export interface ScheduleResponse {
     appointment_date:       string;
     appointment_hour:       string;
     duration:               string;
+    is_done:                number,
     agent_id:               number;
     prospect_id:            number;
     appointment_type_id:    number;

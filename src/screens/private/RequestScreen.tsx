@@ -15,12 +15,14 @@ import { general } from '../../theme/customTheme';
 import { filterObj } from '../../helpers/tools';
 
 import { PolicyTypeResponse } from '../../helpers/interfaces/appInterfaces';
-import * as Contacts from 'expo-contacts';
 import Autocomplete from 'react-native-autocomplete-input';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface RequestInitialState {
+    error: boolean,
+    message: string
     granted: boolean,
-    contacts: {
+    prospects: {
         list: Array<any>,
         filtered: Array<any>,
     },
@@ -29,14 +31,17 @@ interface RequestInitialState {
 };
 
 type RequestActions =
+    | { type: 'SET_ERROR_STATE', payload: { error: boolean, message: string } }
     | { type: 'FETCHING_DATA', payload: { isFetching: boolean } }
-    | { type: 'SET_INITIAL_DATA', payload: { contacts: Array<any>, policiesType: Array<any> } }
+    | { type: 'SET_INITIAL_DATA', payload: { prospects: Array<any>, policiesType: Array<any> } }
     | { type: 'SET_FILTERS', payload: { filtered: Array<any> } }
     | { type: 'RESET_FILTERS' }
 
 const initialState = {
+    error: false,
+    message: '',
     granted: false,
-    contacts: {
+    prospects: {
         list: [],
         filtered: [],
     },
@@ -51,22 +56,29 @@ const datePickerReducer = (state: RequestInitialState = initialState, action: Re
                 ...state,
                 isFetching: action.payload.isFetching
             }
+        case 'SET_ERROR_STATE':
+            return {
+                ...state,
+                isFetching: false,
+                error: action.payload.error,
+                message: action.payload.message
+            }
         case 'SET_FILTERS':
             return {
                 ...state,
-                contacts: { ...state.contacts, filtered: action.payload.filtered },
+                prospects: { ...state.prospects, filtered: action.payload.filtered },
             }
         case 'RESET_FILTERS':
             return {
                 ...state,
-                contacts: { ...state.contacts, filtered: [] },
+                prospects: { ...state.prospects, filtered: [] },
             }
         case 'SET_INITIAL_DATA':
             return {
                 ...state,
                 granted: true,
                 isFetching: false,
-                contacts: { ...state.contacts, list: action.payload.contacts },
+                prospects: { ...state.prospects, list: action.payload.prospects },
                 policiesType: action.payload.policiesType
             }
         default:
@@ -79,15 +91,10 @@ const RequestScreen = ({ navigation }: Navigation) => {
 
     const [open, setOpen] = useState(false);
     const [visibility, setVisibility] = useState(false);
-    const [value, setValue] = useState(null);
-    const [items, setItems] = useState([
-        {label: 'Apple', value: 'apple'},
-        {label: 'Banana', value: 'banana'}
-    ]);
+    const [policyType, setPolicyType] = useState(null);
 
-    const { contact, policyType, policyNumber, onChange } = useForm({
-        contact: '',
-        policyType: '',
+    const { prospect, policyNumber, onChange } = useForm({
+        prospect: '',
         policyNumber: '',
     });
 
@@ -96,36 +103,42 @@ const RequestScreen = ({ navigation }: Navigation) => {
     }, [])
 
     useEffect(() => {
-        const timeOutId = setTimeout(() => handleSearchContacts(contact), 800);
+        const timeOutId = setTimeout(() => handleSearchProspects(prospect), 800);
         return () => clearTimeout(timeOutId);
-    }, [contact])
+    }, [prospect])
     
-    const handlesetSelectedContact = (contact: any) => {
+    const handleSetSelectedProspect = (prospect: any) => {
         setVisibility(true);
-        onChange(`${contact.firstName} ${contact.lastName}`, 'contact')
+        onChange(`${prospect.name} ${prospect.second_surname}`, 'prospect')
     }
 
-    const handleSearchContacts = (value: string) => {
+    const handleSearchProspects = (value: string) => {
         if(value.length > 3){
-            console.log("se ejecuto")
             setVisibility(false);
-            const filtered = filterObj(value, 'firstName', state.contacts.list);
-            dispatch({ type: 'SET_FILTERS', payload: { filtered }  })
+            const filtered = filterObj(value, 'name', state.prospects.list);
+            if(filtered.length > 0){
+                dispatch({ type: 'SET_FILTERS', payload: { filtered }  })
+            }
         }else if(value.trim().length === 0){
             dispatch({ type: 'RESET_FILTERS' })
         }
         
     }
 
+    const handleAddReques = (prospect: string, policyType: any, policyNumber: string) => {
+        console.log(prospect, policyType, policyNumber);
+    }
+
     const onInit = async() => {
-        dispatch({ type: 'FETCHING_DATA', payload: { isFetching: true }  })
-        const { status } = await Contacts.requestPermissionsAsync();
-        if (status === 'granted') {
+        try {
+            dispatch({ type: 'FETCHING_DATA', payload: { isFetching: true }  })
             /**
-             * OBTENEMOS EL LISTADO DE CONTACTOS DEL TELEFONO
+             * OBTENEMOS EL LISTADO DE PROSPECTOS
              */
-            const { data: contacts } = await Contacts.getContactsAsync({
-                fields: [Contacts.Fields.FirstName],
+            const localStorage = await AsyncStorage.getItem('userIdeas');
+            const user = localStorage != null ? JSON.parse(localStorage) : null
+            const { data: prospects }: any = await ideasApi.get<ProspectsResponse>(`/prospects`, {
+                params: { agent_id: user.id }
             });
 
             /**
@@ -145,11 +158,21 @@ const RequestScreen = ({ navigation }: Navigation) => {
             dispatch({ 
                 type: 'SET_INITIAL_DATA', 
                 payload: { 
-                    contacts,
+                    prospects,
                     policiesType: list
                 }  
             })
+        } catch (error) {
+            dispatch({ 
+                type: 'SET_ERROR_STATE', 
+                payload: { 
+                    error: true,
+                    message: "Por el momento el servicio no esta disponible, favor de intentarlo mas tarde."
+                }  
+            })
         }
+        
+        
         
     }
 
@@ -173,29 +196,29 @@ const RequestScreen = ({ navigation }: Navigation) => {
                     <View>
                         <Autocomplete
                             hideResults={visibility}
-                            data={state.contacts.filtered}
-                            value={contact}
-                            onChangeText={(value: string) => onChange(value, 'contact')}
+                            data={state.prospects.filtered}
+                            value={prospect}
+                            onChangeText={(value: string) => onChange(value, 'prospect')}
                             containerStyle={{ marginBottom: 15 }}
                             flatListProps={{
                                 keyExtractor: (_: any, idx: any) => idx,
-                                renderItem: ({ item }: any) => (
-                                    <TouchableOpacity
-                                        onPress={ () => handlesetSelectedContact(item) }
+                                renderItem: ({ item }: any) => {
+                                    return (<TouchableOpacity
+                                        onPress={ () => handleSetSelectedProspect(item) }
                                         style={{ height: 40, alignItems: 'center', justifyContent: 'center' }}
                                     >
-                                        <Text style={{ fontSize: 20 }}>{item.firstName} {item.lastName}</Text>
-                                    </TouchableOpacity>
-                                ),
+                                        <Text style={{ fontSize: 20 }}>{item.name} {item.second_surname}</Text>
+                                    </TouchableOpacity>)
+                                },
                             }}
                         />
                     </View>
                     <DropDownPicker
                         open={open}
-                        value={value}
+                        value={policyType}
                         items={state.policiesType}
                         setOpen={setOpen}
-                        setValue={setValue}
+                        setValue={setPolicyType}
                         style={{
                             borderColor: 'transparent',
                             marginBottom: 20,
@@ -211,7 +234,7 @@ const RequestScreen = ({ navigation }: Navigation) => {
                         value={ policyNumber }
                     />
                     <CustomButton
-                        // onPress={ handleAddRequest }
+                        onPress={ () => handleAddReques(prospect, policyType, policyNumber) }
                         title='Agregar'
                     />
                 </ScrollView>}

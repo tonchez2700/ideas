@@ -37,3 +37,14 @@ export const getAgendaScheduleFormatByAppointmentsResponse = (appointment: Appoi
 
     return result
 }
+
+export const filterObj = (needle: string, key: string, data: Array<T>) => {
+    return data.filter((item: any) => {
+        if(typeof item[key] !== 'undefined'){
+            let value: String = item[key].trim().toLowerCase();
+            if( value.includes( needle.trim().toLowerCase() ) ){
+                return item;
+            }
+        }
+    })
+}

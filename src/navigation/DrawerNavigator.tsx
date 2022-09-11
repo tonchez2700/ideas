@@ -7,6 +7,7 @@ import CustomDrawer from '../components/Layout/CustomDrawer';
 import DashboardScreen from '../screens/private/DashboardScreen';
 import ProspectsScreen from '../screens/private/catalogs/ProspectsScreen';
 import ScheduleScreen from '../screens/private/ScheduleScreen';
+import ScheduleCreationScreen from '../screens/private/catalogs/details/ScheduleCreationScreen';
 import BinacleScreen from '../screens/private/catalogs/BinacleScreen';
 import RequestScreen from '../screens/private/RequestScreen';
 import ScoreScreen from '../screens/private/ScoreScreen';
@@ -84,6 +85,23 @@ const BinacleStack = () => {
   )
 }
 
+const ScheduleStack = () => {
+  return (
+    <StackBinacle.Navigator initialRouteName='ScheduleScreen'>
+      <StackBinacle.Screen
+        component={ ScheduleScreen }
+        name='ScheduleList'
+        options={ navOptionHandler }
+      />
+      <StackBinacle.Screen
+        component={ ScheduleCreationScreen }
+        name='ScheduleCreation'
+        options={ navOptionHandler }
+      />
+    </StackBinacle.Navigator>
+  )
+}
+
 const Drawer = createDrawerNavigator();
 
 const DrawerNavigator = () => {
@@ -101,7 +119,7 @@ const DrawerNavigator = () => {
     >
       <Drawer.Screen name='Dashboard' component={ DashboardScreen } />
       <Drawer.Screen name='Directorio' component={ DirectoryStack } />
-      <Drawer.Screen name='Agenda' component={ ScheduleScreen } />
+      <Drawer.Screen name='Agenda' component={ ScheduleStack } />
       <Drawer.Screen name='Bitácora' component={ BinacleStack } />
       <Drawer.Screen name='Solicitudes' component={ RequestScreen } />
       <Drawer.Screen name='Score' component={ ScoreScreen } />

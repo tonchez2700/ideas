@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { KeyboardAvoidingView, Platform, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, KeyboardAvoidingView, Platform, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Card } from 'react-native-paper';
 import { Agenda } from 'react-native-calendars';
@@ -81,11 +81,24 @@ const ScheduleScreen = ({ navigation }: Navigation) => {
             {
                 fetching
                 ?   <ActivityIndicator size="small" color="#0000ff" />
-                :   <Agenda
-                        hideKnob
-                        items={ agenda.schedules }
-                        renderItem={ renderItem }
-                    />
+                :   <View style={{ flex: 1 }}>
+                        <Agenda
+                            hideKnob
+                            items={ agenda.schedules }
+                            renderItem={ renderItem }
+                        />
+                        <TouchableOpacity
+                            activeOpacity={ colors.opacity }
+                            onPress={ () => navigation.navigate("ScheduleCreation") }
+                            style={ styles.add_button }
+                        >
+                            <Icon
+                                color={ colors.primary }
+                                name='add'
+                                size={ 18 }
+                            />
+                        </TouchableOpacity>
+                    </View>
             }
             
         </KeyboardAvoidingView>
@@ -93,3 +106,21 @@ const ScheduleScreen = ({ navigation }: Navigation) => {
 }
 
 export default ScheduleScreen;
+
+
+const styles = StyleSheet.create({
+    add_button: {
+        alignItems: 'center',
+        backgroundColor: colors.white,
+        borderRadius: 100,
+        bottom: 34,
+        elevation: 3,
+        justifyContent: 'center',
+        height: 62,
+        position: 'absolute',
+        right: 18,
+        shadowColor: colors.black_opacity,
+        shadowOffset: { height: 2, width: 0, },
+        width: 62,
+    },
+})

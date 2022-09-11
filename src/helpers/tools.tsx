@@ -1,5 +1,5 @@
 import moment from 'moment';
-
+import { Alert } from 'react-native';
 import { AgendaScheduleDataType, AppointmentsResponseType } from './interfaces/appTypes';
 import { ScheduleResponse } from '../helpers/interfaces/appInterfaces';
 
@@ -47,4 +47,8 @@ export const filterObj = (needle: string, key: string, data: Array<T>) => {
             }
         }
     })
+}
+
+export const throwAlert = (title: string, message: string) => {
+    Alert.alert(title, message);
 }

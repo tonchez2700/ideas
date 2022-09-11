@@ -12,7 +12,7 @@ import CustomButton from '../../components/CustomButton';
 import CustomInput from '../../components/CustomInput';
 
 import { general } from '../../theme/customTheme';
-import { filterObj } from '../../helpers/tools';
+import { filterObj, throwAlert } from '../../helpers/tools';
 
 import { PolicyTypeResponse } from '../../helpers/interfaces/appInterfaces';
 import Autocomplete from 'react-native-autocomplete-input';
@@ -23,6 +23,7 @@ interface RequestInitialState {
     message: string
     granted: boolean,
     prospects: {
+        selected: Object,
         list: Array<any>,
         filtered: Array<any>,
     },
@@ -35,6 +36,7 @@ type RequestActions =
     | { type: 'FETCHING_DATA', payload: { isFetching: boolean } }
     | { type: 'SET_INITIAL_DATA', payload: { prospects: Array<any>, policiesType: Array<any> } }
     | { type: 'SET_FILTERS', payload: { filtered: Array<any> } }
+    | { type: 'SET_SELECTED_PROSPECT', payload: { prospect: Object } }
     | { type: 'RESET_FILTERS' }
 
 const initialState = {
@@ -42,6 +44,7 @@ const initialState = {
     message: '',
     granted: false,
     prospects: {
+        selected: {},
         list: [],
         filtered: [],
     },
@@ -73,6 +76,11 @@ const datePickerReducer = (state: RequestInitialState = initialState, action: Re
                 ...state,
                 prospects: { ...state.prospects, filtered: [] },
             }
+        case 'SET_SELECTED_PROSPECT':
+            return {
+                ...state,
+                prospects: { ...state.prospects, selected: action.payload.prospect, filtered: [] },
+            }
         case 'SET_INITIAL_DATA':
             return {
                 ...state,
@@ -103,12 +111,13 @@ const RequestScreen = ({ navigation }: Navigation) => {
     }, [])
 
     useEffect(() => {
-        const timeOutId = setTimeout(() => handleSearchProspects(prospect), 800);
+        const timeOutId = setTimeout(() => handleSearchProspects(prospect), 500);
         return () => clearTimeout(timeOutId);
     }, [prospect])
     
     const handleSetSelectedProspect = (prospect: any) => {
         setVisibility(true);
+        dispatch({ type: 'SET_SELECTED_PROSPECT', payload: { prospect }  })
         onChange(`${prospect.name} ${prospect.second_surname}`, 'prospect')
     }
 
@@ -116,17 +125,58 @@ const RequestScreen = ({ navigation }: Navigation) => {
         if(value.length > 3){
             setVisibility(false);
             const filtered = filterObj(value, 'name', state.prospects.list);
-            if(filtered.length > 0){
-                dispatch({ type: 'SET_FILTERS', payload: { filtered }  })
-            }
+            dispatch({ type: 'SET_FILTERS', payload: { filtered }  })
         }else if(value.trim().length === 0){
             dispatch({ type: 'RESET_FILTERS' })
         }
         
     }
 
-    const handleAddReques = (prospect: string, policyType: any, policyNumber: string) => {
-        console.log(prospect, policyType, policyNumber);
+    const handleAddReques = async(prospect: string, policyType: any, policyNumber: string) => {
+        try {
+            const validated: any = validateRequestData(policyType, policyNumber)
+            if(!validated.error){
+                dispatch({ type: 'FETCHING_DATA', payload: { isFetching: true }  })
+                const localStorage = await AsyncStorage.getItem('userIdeas');
+                const user = localStorage != null ? JSON.parse(localStorage) : null
+                const request = {
+                    agent_id: user.id,
+                    prospect_id: state.prospects.selected.id,
+                    policy_type_id: policyType,
+                    policy_status_id: 1,
+                    currency_type: "",
+                    currency_amount: "",
+                    pesos_amount: ""
+                }
+                const { data } = await ideasApi.post('/policies', request);
+                dispatch({ type: 'FETCHING_DATA', payload: { isFetching: false }  })
+                if(data){
+                    navigation.navigate('Dashboard')
+                }else{
+                    throwAlert("Error", "No ha sido posible guardar el registro.");
+                }
+            }else{
+                throwAlert("Error", validated.message);
+            }
+        } catch (error) {
+            console.log(error);
+        }        
+    }
+
+    const validateRequestData = (policyType: any, policyNumber: string) => {
+        let result = { error: false, message: '' }
+        
+        if(Object.keys(state.prospects.selected).length === 0)
+            return { error: true, message: "Es necesario que seleccione un contacto valido de la lista de opciones." }
+
+        if(policyType === null)
+            return { error: true, message: "Es necesario que seleccione un tipo de poliza." }
+
+        if(policyNumber.trim() === '')
+            return { error: true, message: "Es necesario que capture un número de póliza.." }
+
+        return result;
+
     }
 
     const onInit = async() => {

@@ -16,9 +16,10 @@ interface Props {
     secureTextEntry?:   any;
     type?:              string;
     value?:             string;
+    editable?:          boolean
 }
 
-const CustomInput = ({ autoCapitalize='none', keyboardType='default', icon, nameIcon, onChangeText, onPress, label, placeholder, secureTextEntry, type='PRIMARY', value }: Props) => {
+const CustomInput = ({ editable=true, autoCapitalize='none', keyboardType='default', icon, nameIcon, onChangeText, onPress, label, placeholder, secureTextEntry, type='PRIMARY', value }: Props) => {
 
     return (
         <View style={[
@@ -38,6 +39,7 @@ const CustomInput = ({ autoCapitalize='none', keyboardType='default', icon, name
                     </View>
                 }
                 <TextInput
+                    editable={editable}
                     autoCapitalize={ autoCapitalize }
                     autoCompleteType='off'
                     keyboardType={ keyboardType }

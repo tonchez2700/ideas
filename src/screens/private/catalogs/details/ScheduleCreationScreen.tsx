@@ -140,7 +140,7 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
                 const localStorage = await AsyncStorage.getItem('userIdeas');
                 const user = localStorage != null ? JSON.parse(localStorage) : null
                 const request = {
-                    appointment_date: date,
+                    appointment_date: moment(date, "DD-MM-YYYY").format("YYYY-MM-DD"),
                     appointment_hour: `${time}:00`,
                     duration: duration,
                     agent_id: user.id,

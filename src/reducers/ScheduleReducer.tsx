@@ -25,6 +25,7 @@ export const ScheduleReducer = (state: ScheduleState, action: ScheduleAction): S
         case 'schedule/set_appointments':
             return {
                 ...state,
+                fetching: false,
                 agenda: action.payload.agenda,
                 appointments: action.payload.appointments,
             }

@@ -32,6 +32,10 @@ export const ScheduleProvider = ({ children }: any ) => {
 
     const fetchAppointments = async() => {
         try {
+            dispatch({
+                type: 'schedule/fetching',
+                payload: { fetching: true }
+            });
             const localStorage = await AsyncStorage.getItem('userIdeas');
             const user = localStorage != null ? JSON.parse(localStorage) : null
             const { data }: any = await ideasApi.get<ScheduleResponse>(`/appointments`, {

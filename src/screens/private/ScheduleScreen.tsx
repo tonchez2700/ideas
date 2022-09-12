@@ -10,6 +10,7 @@ import useFetch from '../../hooks/useFetch';
 import { ScheduleContext } from '../../context/ScheduleContext';
 import { Navigation } from '../../helpers/interfaces/appInterfaces';
 import { colors, general } from '../../theme/customTheme';
+import { useIsFocused } from '@react-navigation/native';
 
 const timeToString = (time: any) => {
     const date = new Date(time);
@@ -17,6 +18,7 @@ const timeToString = (time: any) => {
 };
 
 const ScheduleScreen = ({ navigation }: Navigation) => {
+    const isFocused = useIsFocused();
     const { 
         agenda,
         fetching,
@@ -26,7 +28,7 @@ const ScheduleScreen = ({ navigation }: Navigation) => {
 
     useEffect(() => {
         fetchAppointments()
-    }, [])
+    }, [isFocused])
 
     const renderItem = (item: any) => {
         return (

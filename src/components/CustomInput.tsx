@@ -17,9 +17,10 @@ interface Props {
     type?:              string;
     value?:             string;
     editable?:          boolean
+    maxLength?:         numeric
 }
 
-const CustomInput = ({ editable=true, autoCapitalize='none', keyboardType='default', icon, nameIcon, onChangeText, onPress, label, placeholder, secureTextEntry, type='PRIMARY', value }: Props) => {
+const CustomInput = ({ maxLength=6, editable=true, autoCapitalize='none', keyboardType='default', icon, nameIcon, onChangeText, onPress, label, placeholder, secureTextEntry, type='PRIMARY', value }: Props) => {
 
     return (
         <View style={[
@@ -39,6 +40,7 @@ const CustomInput = ({ editable=true, autoCapitalize='none', keyboardType='defau
                     </View>
                 }
                 <TextInput
+                    maxLength={maxLength}
                     editable={editable}
                     autoCapitalize={ autoCapitalize }
                     autoCompleteType='off'

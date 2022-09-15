@@ -73,7 +73,6 @@ export default CustomInput;
 
 const inputs = StyleSheet.create({
     container: {
-        elevation: 3,
         height: 57,
         marginBottom: 20,
         shadowColor: colors.black_opacity,

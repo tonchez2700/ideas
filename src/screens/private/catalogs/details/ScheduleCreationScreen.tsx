@@ -110,7 +110,7 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
     }, [])
 
     useEffect(() => {
-        const timeOutId = setTimeout(() => handleSearchProspects(prospect), 500);
+        const timeOutId = setTimeout(() => handleSearchProspects(prospect), 200);
         return () => clearTimeout(timeOutId);
     }, [prospect])
     

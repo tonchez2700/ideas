@@ -100,8 +100,8 @@ const RequestScreen = ({ navigation }: Navigation) => {
     const [open, setOpen] = useState(false);
     const [visibility, setVisibility] = useState(false);
     const [policyType, setPolicyType] = useState(null);
-
-    const { prospect, policyNumber, onChange } = useForm({
+    const [prospect, setProspect] = useState('')
+    const { policyNumber, onChange } = useForm({
         prospect: '',
         policyNumber: '',
     });
@@ -111,14 +111,14 @@ const RequestScreen = ({ navigation }: Navigation) => {
     }, [])
 
     useEffect(() => {
-        const timeOutId = setTimeout(() => handleSearchProspects(prospect), 500);
+        const timeOutId = setTimeout(() => handleSearchProspects(prospect), 200);
         return () => clearTimeout(timeOutId);
     }, [prospect])
     
     const handleSetSelectedProspect = (prospect: any) => {
         setVisibility(true);
         dispatch({ type: 'SET_SELECTED_PROSPECT', payload: { prospect }  })
-        onChange(`${prospect.name} ${prospect.second_surname}`, 'prospect')
+        setProspect(`${prospect.name} ${prospect.second_surname}`)
     }
 
     const handleSearchProspects = (value: string) => {
@@ -151,6 +151,7 @@ const RequestScreen = ({ navigation }: Navigation) => {
                 const { data } = await ideasApi.post('/policies', request);
                 dispatch({ type: 'FETCHING_DATA', payload: { isFetching: false }  })
                 if(data){
+                    clearFormData()
                     navigation.navigate('Dashboard')
                 }else{
                     throwAlert("Error", "No ha sido posible guardar el registro.");
@@ -226,6 +227,12 @@ const RequestScreen = ({ navigation }: Navigation) => {
         
     }
 
+    const clearFormData = () => {
+        setPolicyType(null)
+        setProspect('')
+        onChange('', 'policyNumber')
+    }
+
     return (
         <KeyboardAvoidingView
             behavior={ (Platform.OS === 'ios') ? 'padding' : 'height' }
@@ -248,7 +255,7 @@ const RequestScreen = ({ navigation }: Navigation) => {
                             hideResults={visibility}
                             data={state.prospects.filtered}
                             value={prospect}
-                            onChangeText={(value: string) => onChange(value, 'prospect')}
+                            onChangeText={(value: string) => setProspect(value)}
                             containerStyle={{ marginBottom: 15 }}
                             flatListProps={{
                                 keyExtractor: (_: any, idx: any) => idx,

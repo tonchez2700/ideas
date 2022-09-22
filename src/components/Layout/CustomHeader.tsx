@@ -1,15 +1,31 @@
-import React, { useContext } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState, useContext } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View, Modal, Alert, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import ideasApi from '../../api/ideasApi';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { AuthContext } from '../../context/AuthContext';
 
 import { colors } from '../../theme/customTheme';
+import CustomInput from './../../components/CustomInput'
+import CustomButton from './../../components/CustomButton'
 
 interface Props {
     title?:         string;
     isHome?:        any;
     navigation?:    any;
+}
+
+type HeaderStateType = {
+    fetching: boolean,
+    modalVisible: boolean,
+    personalGoal: string
+}
+
+const initialState = {
+    fetching: false,
+    modalVisible: false,
+    personalGoal: ''
 }
 
 export const CustomHeader = ({ title, isHome, navigation }: Props) => {    
@@ -60,11 +76,51 @@ export const CustomHeader = ({ title, isHome, navigation }: Props) => {
 
 export const CustomHomeHeader = ({ navigation }: Props) => {
     const { user } = useContext(AuthContext);
+    const [headerState, setHeaderState] = useState<HeaderStateType>(initialState);
+
+    useEffect(() => {
+      console.log("Rendered Header")
+    })
+    
     
     const openDrawer = () => {
         navigation.openDrawer();
     }
-    
+
+    const handleAddPersonalGoal = async() => {
+        try {
+            if(headerState.personalGoal !== ''){
+                setHeaderState((state: HeaderStateType) => ({ ...state, fetching: !state.fetching }))
+                const localStorage = await AsyncStorage.getItem('userIdeas');
+                const user = localStorage != null ? JSON.parse(localStorage) : null
+                const { data }: any = await ideasApi.put(`/goals/${user.id}`, { "goal": headerState.personalGoal })
+
+                if(!data.status){
+                    Alert.alert("Ya ha asignado una meta personal.");
+                }else{
+                    Alert.alert("Meta personal asignada correctamente.");
+                }
+
+                setHeaderState((state: HeaderStateType) => ({ 
+                    ...state, 
+                    fetching: !state.fetching,
+                    modalVisible: !state.modalVisible 
+                }))
+            }else{
+                Alert.alert("Es necesario que introdusca su meta personal.");
+            }
+
+        } catch (error) {
+            setHeaderState((state: HeaderStateType) => ({ 
+                ...state, 
+                fetching: !state.fetching,
+                modalVisible: !state.modalVisible 
+            }))
+            Alert.alert("Por el momento no ha sido posible actualizar su meta personal, favor de intentarlo mas tarde.");
+        }
+        
+    }
+
     return (
         <View style={[ header.container_view, header.container_SECONDARY ]}>
             <View style={{ flexDirection: 'row', paddingTop: 30, }}>
@@ -74,12 +130,69 @@ export const CustomHomeHeader = ({ navigation }: Props) => {
                         style={ header.image }
                     />
                 </View>
-                <View style={{ justifyContent: 'center', marginLeft: 25, }}>
+                <View style={{ justifyContent: 'center', marginLeft: 25, flex: 1 }}>
                     <Text style={ header.text }>Hola, <Text style={{ fontWeight: 'normal' }}>{ user?.name }</Text></Text>
                     <Text style={ header.subText }>Sigue cumpliendo tus metas</Text>
                 </View>
+                <TouchableOpacity 
+                    onPress={() => setHeaderState((state: HeaderStateType) => ({ ...state, modalVisible: !state.modalVisible }))}
+                    style={{ justifyContent: 'center', marginLeft: 25, }}
+                >
+                    <Icon
+                        name='flag'
+                        color={ colors.white }
+                        size={ 25 }
+                    />
+                </TouchableOpacity>
             </View>
-            
+            {/* <CustomModal /> */}
+            <View
+                style={{ 
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: 22 
+                }}
+            >
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    style={{ backgroundColor: 'red' }}
+                    visible={headerState.modalVisible}
+                    onRequestClose={() => {
+                        Alert.alert("Modal has been closed.");
+                        setHeaderState((state: HeaderStateType) => ({ ...state, modalVisible: !state.modalVisible }))
+                    }}
+                >
+                    <View style={{ flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.5)', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ backgroundColor: '#f5f5f5', flex: 1, marginLeft: 25, marginRight: 25, padding: 25, borderRadius: 15 }}>
+                            <Text style={{ fontSize: 18, marginBottom: 15 }}>Agrega tu meta personal</Text>
+                            <CustomInput
+                                keyboardType="numeric"
+                                maxLength={8}
+                                onChangeText={ (value: string) => setHeaderState((state: HeaderStateType) => ({ ...state, personalGoal: value })) }
+                                placeholder='Meta personal'
+                                value={headerState.personalGoal}
+                            />
+                            {!headerState.fetching
+                                ?   <View>
+                                        <CustomButton
+                                            onPress={ () => handleAddPersonalGoal() }
+                                            title='Agregar'
+                                        />
+                                        <CustomButton
+                                            onPress={ () => setHeaderState((state: HeaderStateType) => ({ ...state, modalVisible: !state.modalVisible }))}
+                                            title='Cancelar'
+                                            type="SECONDARY"
+                                        />
+                                    </View>
+                                :   <ActivityIndicator size="small" color="#0000ff" />
+                            }
+                            
+                        </View>
+                    </View>
+                </Modal>
+            </View>
             <TouchableOpacity
                 activeOpacity={ colors.opacity }
                 onPress={ openDrawer }
@@ -150,5 +263,46 @@ const header = StyleSheet.create({
         color: colors.white,
         fontSize: 15,
         marginLeft: 5,
-    }
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22
+      },
+      modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+      },
+      button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2
+      },
+      buttonOpen: {
+        backgroundColor: "#F194FF",
+      },
+      buttonClose: {
+        backgroundColor: "#2196F3",
+      },
+      textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+      },
+      modalText: {
+        marginBottom: 15,
+        textAlign: "center"
+      }
 })

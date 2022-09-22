@@ -119,3 +119,11 @@ export interface PolicyTypeResponse {
     created_at:           number;
     updated_at:           number;
 }
+
+export interface GoalPercentageResponse {
+    agent_id:             number;
+    game_id:              number;
+    policies_sold_amount: number;
+    goal:                 number;
+    goal_percentage:      number;
+}

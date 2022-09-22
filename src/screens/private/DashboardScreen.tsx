@@ -1,30 +1,68 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, KeyboardAvoidingView, FlatList, LogBox, Platform, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, KeyboardAvoidingView, ActivityIndicator, LogBox, Platform, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import { Navigation } from '../../helpers/interfaces/appInterfaces';
 import { listRecords } from '../../helpers/data/listRecords';
 
 import { CustomHomeHeader } from '../../components/Layout/CustomHeader';
+import ProgressBar from '../../components/ProgressBar';
 import { CustomRecord } from '../../components/FlatList/CustomRecord';
 
 import { colors, general } from '../../theme/customTheme';
+import { GoalPercentageResponse } from '../../helpers/interfaces/appInterfaces';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import ideasApi from '../../api/ideasApi';
+
+type DashboardStateType = {
+    fetching: boolean,
+    progress: GoalPercentageResponse
+}
+
+const initialState = {
+    fetching: true,
+    progress: {
+        agent_id: 0,
+        game_id: 0,
+        policies_sold_amount: 0,
+        goal: 0,
+        goal_percentage: 0,
+    }
+}
 
 
 const DashboardScreen = ({ navigation }: Navigation) => {
-    const [records, setRecords] = useState();
+
+    const [state, setState] = useState<DashboardStateType>(initialState);
+
+
     
-    const renderOption = ({ item }: any) => (
-        <CustomRecord
-            message={ item.message }
-            phone={ item.phone }
-            title={ item.title }
-        />
-    );
+    // const renderOption = ({ item }: any) => (
+    //     <CustomRecord
+    //         message={ item.message }
+    //         phone={ item.phone }
+    //         title={ item.title }
+    //     />
+    // );
     
     useEffect(() => {
+        setInitialData()
         LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
     }, [])
+
+    const setInitialData = async() => {
+        try {
+            setState((state: DashboardStateType) => ({ ...state, fetching: true }))
+            const localStorage = await AsyncStorage.getItem('userIdeas');
+            const user = localStorage != null ? JSON.parse(localStorage) : null
+            const { data }: any = await ideasApi.get(`/goals/calculatepercentage/${user.id}`)
+            setState((state: DashboardStateType) => ({ ...state, fetching: false, progress: data }))
+        } catch (error) {
+            console.log(error)
+        }
+        
+
+    }
 
     return (
         <KeyboardAvoidingView
@@ -36,6 +74,15 @@ const DashboardScreen = ({ navigation }: Navigation) => {
             />
 
             <ScrollView style={ general.global_margin }>
+
+                {!state.fetching
+                    ?   <ProgressBar 
+                            current={state.progress.policies_sold_amount} 
+                            total={state.progress.goal} 
+                            percentage={state.progress.goal_percentage} 
+                        />
+                    :   <ActivityIndicator style={{marginVertical: 10}} size="large" color="#0000ff" />
+                } 
 
                 <View style={ styles.container_card }>
                     <View>

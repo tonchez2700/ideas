@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, FlatList, LogBox, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, KeyboardAvoidingView, FlatList, LogBox, Platform, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import { Navigation } from '../../helpers/interfaces/appInterfaces';
@@ -35,10 +35,25 @@ const DashboardScreen = ({ navigation }: Navigation) => {
                 navigation={ navigation }
             />
 
-            <View style={ general.global_margin }>
+            <ScrollView style={ general.global_margin }>
+
                 <View style={ styles.container_card }>
-                    <Text style={ styles.subtitle }>CONOCE TU PROGRESO</Text>
-                    <Text style={ styles.subtitle }>INSIGNIAS</Text>
+                    <View>
+                        <Text style={ styles.subtitle }>CONOCE TU PROGRESO</Text>
+                        <Image
+                            resizeMode='stretch'
+                            source={ require('../../assets/images/mountains.png') }
+                            style={{ height: 243, position: 'relative', marginTop: 15 }}
+                        />
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                        <Text style={ styles.subtitle }>INSIGNIAS</Text>
+                        <Image
+                            resizeMode='stretch'
+                            source={ require('../../assets/images/insignias.png') }
+                            style={{ height: 194, position: 'relative', marginTop: 15 }}
+                        />
+                    </View>
                 </View>
 
                 <View style={ styles.container_views }>
@@ -102,13 +117,14 @@ const DashboardScreen = ({ navigation }: Navigation) => {
                         </View>
                     </TouchableOpacity>
                 </View>
-                <FlatList
+                {/* <FlatList
                     data={ records ? records : listRecords }
                     renderItem={ renderOption }
                     keyExtractor={ item => item.id }
                     showsVerticalScrollIndicator={ false }
-                />
-            </View>
+                /> */}
+            </ScrollView>
+
         </KeyboardAvoidingView>
     )
 }
@@ -121,7 +137,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         flexDirection: 'row',
         justifyContent: 'space-around',
-        marginVertical: 23,
+        marginVertical: 20,
         padding: 20,
     },
     container_views: {

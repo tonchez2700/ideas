@@ -13,7 +13,7 @@ import RNSpeedometer from 'react-native-speedometer'
 import { GoalContext } from '../../context/GoalContext';
 
 const DashboardScreen = ({ navigation }: Navigation) => {
-    const { progress, fetching, setInitialData }: any = useContext(GoalContext);
+    const { progress, fetching, fetchPersonalGoal }: any = useContext(GoalContext);
     // const renderOption = ({ item }: any) => (
     //     <CustomRecord
     //         message={ item.message }
@@ -23,7 +23,7 @@ const DashboardScreen = ({ navigation }: Navigation) => {
     // );
     
     useEffect(() => {
-        setInitialData()
+        fetchPersonalGoal()
         LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
     }, [])
 

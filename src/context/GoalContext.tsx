@@ -7,7 +7,7 @@ type GoalContextProps = {
     fetching: boolean,
     updatePersonalGoal: (goal: number) => Promise<void>; 
     updateProgress: (goal: number, currentGoal: number) => Promise<void>; 
-    setInitialData: () => void;
+    fetchPersonalGoal: () => void;
 }
 
 const goalInitialState: GoalState = {
@@ -32,7 +32,7 @@ export const GoalProvider = ({ children }: any ) => {
 
     const updateProgress = async(goal: number, currentGoal: number) => {}
 
-    const setInitialData = async() => {
+    const fetchPersonalGoal = async() => {
         try {
             dispatch({ type: 'goal/fetching', payload: { fetching: true } })
             const localStorage = await AsyncStorage.getItem('userIdeas');
@@ -48,7 +48,7 @@ export const GoalProvider = ({ children }: any ) => {
         <GoalContext.Provider value={{
             ...state,
             updateProgress,
-            setInitialData,
+            fetchPersonalGoal,
             updatePersonalGoal,
         }}>
             { children }

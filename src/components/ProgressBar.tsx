@@ -23,7 +23,7 @@ const ProgressBar = ({ current, total, percentage }: Props) => {
                     color="primary" 
                 />
             </View>
-            <Text style={{ color: 'gray', marginVertical: 5 }}>{percentage}% Completado</Text>
+            <Text style={{ color: 'gray', marginVertical: 5 }}>{percentage.toFixed(2)}% Completado</Text>
         </View>
     );
 }

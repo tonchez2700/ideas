@@ -7,17 +7,20 @@ import { AuthProvider } from './src/context/AuthContext';
 import { ProspectsProvider } from './src/context/ProspectsContext';
 import { ScheduleProvider } from './src/context/ScheduleContext';
 import { BinnacleProvider } from './src/context/BinnacleContext';
+import { GoalProvider } from './src/context/GoalContext';
 
 const AppState = ({ children }: any) => {
     return (
         <AuthProvider>
-            <ProspectsProvider>
-                <ScheduleProvider>
-                    <BinnacleProvider>
-                        { children }
-                    </BinnacleProvider>
-                </ScheduleProvider>
-            </ProspectsProvider>
+            <GoalProvider>
+                <ProspectsProvider>
+                    <ScheduleProvider>
+                        <BinnacleProvider>
+                            { children }
+                        </BinnacleProvider>
+                    </ScheduleProvider>
+                </ProspectsProvider>
+            </GoalProvider>
         </AuthProvider>
     )
 }

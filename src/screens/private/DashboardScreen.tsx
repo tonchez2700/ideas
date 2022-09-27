@@ -1,42 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { ScrollView, KeyboardAvoidingView, ActivityIndicator, LogBox, Platform, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useContext } from 'react';
+import { ScrollView, KeyboardAvoidingView, ActivityIndicator, LogBox, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import { Navigation } from '../../helpers/interfaces/appInterfaces';
-import { listRecords } from '../../helpers/data/listRecords';
 
 import { CustomHomeHeader } from '../../components/Layout/CustomHeader';
 import ProgressBar from '../../components/ProgressBar';
-import { CustomRecord } from '../../components/FlatList/CustomRecord';
 
 import { colors, general } from '../../theme/customTheme';
-import { GoalPercentageResponse } from '../../helpers/interfaces/appInterfaces';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import ideasApi from '../../api/ideasApi';
-
-type DashboardStateType = {
-    fetching: boolean,
-    progress: GoalPercentageResponse
-}
-
-const initialState = {
-    fetching: true,
-    progress: {
-        agent_id: 0,
-        game_id: 0,
-        policies_sold_amount: 0,
-        goal: 0,
-        goal_percentage: 0,
-    }
-}
-
+import { SPEEDOMETER_LABELS } from '../../config/defines';
+import RNSpeedometer from 'react-native-speedometer'
+import { GoalContext } from '../../context/GoalContext';
 
 const DashboardScreen = ({ navigation }: Navigation) => {
-
-    const [state, setState] = useState<DashboardStateType>(initialState);
-
-
-    
+    const { progress, fetching, setInitialData }: any = useContext(GoalContext);
     // const renderOption = ({ item }: any) => (
     //     <CustomRecord
     //         message={ item.message }
@@ -50,18 +27,26 @@ const DashboardScreen = ({ navigation }: Navigation) => {
         LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
     }, [])
 
-    const setInitialData = async() => {
-        try {
-            setState((state: DashboardStateType) => ({ ...state, fetching: true }))
-            const localStorage = await AsyncStorage.getItem('userIdeas');
-            const user = localStorage != null ? JSON.parse(localStorage) : null
-            const { data }: any = await ideasApi.get(`/goals/calculatepercentage/${user.id}`)
-            setState((state: DashboardStateType) => ({ ...state, fetching: false, progress: data }))
-        } catch (error) {
-            console.log(error)
-        }
-        
-
+    const RenderSpeedometer = () => {
+        return (
+            <View style={{ marginTop: 15 }}>
+                <View style={{ height: 220 }}>
+                    <RNSpeedometer 
+                        value={progress.policies_sold_amount} 
+                        size={300}
+                        minValue={0}
+                        maxValue={progress.goal}
+                        labels={ SPEEDOMETER_LABELS }
+                        innerCircleStyle={{ backgroundColor: '#F5F5F5' }}
+                    />
+                </View>
+                <ProgressBar 
+                    current={progress.policies_sold_amount} 
+                    total={progress.goal} 
+                    percentage={progress.goal_percentage} 
+                />
+            </View>
+        )
     }
 
     return (
@@ -75,33 +60,10 @@ const DashboardScreen = ({ navigation }: Navigation) => {
 
             <ScrollView style={ general.global_margin }>
 
-                {!state.fetching
-                    ?   <ProgressBar 
-                            current={state.progress.policies_sold_amount} 
-                            total={state.progress.goal} 
-                            percentage={state.progress.goal_percentage} 
-                        />
+                {!fetching
+                    ?   <RenderSpeedometer />
                     :   <ActivityIndicator style={{marginVertical: 10}} size="large" color="#0000ff" />
                 } 
-
-                <View style={ styles.container_card }>
-                    <View>
-                        <Text style={ styles.subtitle }>CONOCE TU PROGRESO</Text>
-                        <Image
-                            resizeMode='stretch'
-                            source={ require('../../assets/images/mountains.png') }
-                            style={{ height: 243, position: 'relative', marginTop: 15 }}
-                        />
-                    </View>
-                    <View style={{ alignItems: 'center' }}>
-                        <Text style={ styles.subtitle }>INSIGNIAS</Text>
-                        <Image
-                            resizeMode='stretch'
-                            source={ require('../../assets/images/insignias.png') }
-                            style={{ height: 194, position: 'relative', marginTop: 15 }}
-                        />
-                    </View>
-                </View>
 
                 <View style={ styles.container_views }>
                     <TouchableOpacity activeOpacity={ colors.opacity } onPress={ () => navigation.navigate('Directorio') } style={ styles.body_card }>

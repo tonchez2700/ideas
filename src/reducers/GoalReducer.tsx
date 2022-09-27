@@ -18,7 +18,8 @@ export interface GoalState {
 type GoalActions =
     | { type: 'goal/fetching', payload: { fetching: boolean }}
     | { type: 'goal/set_error', payload: { message: string | unknown }}
-    | { type: 'goal/set_goal_data', payload: { progress: any }}
+    | { type: 'goal/update_personal_goal', payload: { progress: any }}
+    | { type: 'goal/set_modal_visibility_state', payload: { modalVisible: boolean }}
 
 
 export const GoalReducer = (state: GoalState, action: GoalActions): GoalState => {
@@ -34,11 +35,19 @@ export const GoalReducer = (state: GoalState, action: GoalActions): GoalState =>
                 error: true,
                 message: action.payload.message,
             }
-        case 'goal/set_goal_data':
+        case 'goal/update_personal_goal':
             return {
                 ...state,
                 fetching: false,
+                modalVisible: false,
                 progress: action.payload.progress
+            }
+        case 'goal/set_modal_visibility_state':
+            return {
+                ...state,
+                fetching: false,
+                personalGoal: '',
+                modalVisible: action.payload.modalVisible
             }
         default:
             return state;

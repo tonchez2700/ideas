@@ -5,6 +5,7 @@ import ideasApi from '../../api/ideasApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { AuthContext } from '../../context/AuthContext';
+import { GoalContext } from '../../context/GoalContext';
 
 import { colors } from '../../theme/customTheme';
 import CustomInput from './../../components/CustomInput'
@@ -16,15 +17,7 @@ interface Props {
     navigation?:    any;
 }
 
-type HeaderStateType = {
-    fetching: boolean,
-    modalVisible: boolean,
-    personalGoal: string
-}
-
 const initialState = {
-    fetching: false,
-    modalVisible: false,
     personalGoal: ''
 }
 
@@ -76,49 +69,11 @@ export const CustomHeader = ({ title, isHome, navigation }: Props) => {
 
 export const CustomHomeHeader = ({ navigation }: Props) => {
     const { user } = useContext(AuthContext);
+    const { fetching, modalVisible, setModalVisibilityState, updatePersonalGoal } : any = useContext(GoalContext);
     const [headerState, setHeaderState] = useState<HeaderStateType>(initialState);
-
-    useEffect(() => {
-      console.log("Rendered Header")
-    })
-    
     
     const openDrawer = () => {
         navigation.openDrawer();
-    }
-
-    const handleAddPersonalGoal = async() => {
-        try {
-            if(headerState.personalGoal !== ''){
-                setHeaderState((state: HeaderStateType) => ({ ...state, fetching: !state.fetching }))
-                const localStorage = await AsyncStorage.getItem('userIdeas');
-                const user = localStorage != null ? JSON.parse(localStorage) : null
-                const { data }: any = await ideasApi.put(`/goals/${user.id}`, { "goal": headerState.personalGoal })
-
-                if(!data.status){
-                    Alert.alert("Ya ha asignado una meta personal.");
-                }else{
-                    Alert.alert("Meta personal asignada correctamente.");
-                }
-
-                setHeaderState((state: HeaderStateType) => ({ 
-                    ...state, 
-                    fetching: !state.fetching,
-                    modalVisible: !state.modalVisible 
-                }))
-            }else{
-                Alert.alert("Es necesario que introdusca su meta personal.");
-            }
-
-        } catch (error) {
-            setHeaderState((state: HeaderStateType) => ({ 
-                ...state, 
-                fetching: !state.fetching,
-                modalVisible: !state.modalVisible 
-            }))
-            Alert.alert("Por el momento no ha sido posible actualizar su meta personal, favor de intentarlo mas tarde.");
-        }
-        
     }
 
     return (
@@ -135,7 +90,7 @@ export const CustomHomeHeader = ({ navigation }: Props) => {
                     <Text style={ header.subText }>Sigue cumpliendo tus metas</Text>
                 </View>
                 <TouchableOpacity 
-                    onPress={() => setHeaderState((state: HeaderStateType) => ({ ...state, modalVisible: !state.modalVisible }))}
+                    onPress={() => setModalVisibilityState(!modalVisible) }
                     style={{ justifyContent: 'center', marginLeft: 25, }}
                 >
                     <Icon
@@ -158,10 +113,10 @@ export const CustomHomeHeader = ({ navigation }: Props) => {
                     animationType="fade"
                     transparent={true}
                     style={{ backgroundColor: 'red' }}
-                    visible={headerState.modalVisible}
+                    visible={modalVisible}
                     onRequestClose={() => {
                         Alert.alert("Modal has been closed.");
-                        setHeaderState((state: HeaderStateType) => ({ ...state, modalVisible: !state.modalVisible }))
+                        setModalVisibilityState(!modalVisible)
                     }}
                 >
                     <View style={{ flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.5)', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -174,14 +129,14 @@ export const CustomHomeHeader = ({ navigation }: Props) => {
                                 placeholder='Meta personal'
                                 value={headerState.personalGoal}
                             />
-                            {!headerState.fetching
+                            {!fetching
                                 ?   <View>
                                         <CustomButton
-                                            onPress={ () => handleAddPersonalGoal() }
+                                            onPress={ () => updatePersonalGoal(headerState.personalGoal) }
                                             title='Agregar'
                                         />
                                         <CustomButton
-                                            onPress={ () => setHeaderState((state: HeaderStateType) => ({ ...state, modalVisible: !state.modalVisible }))}
+                                            onPress={ () => setModalVisibilityState(!modalVisible)}
                                             title='Cancelar'
                                             type="SECONDARY"
                                         />

@@ -14,13 +14,6 @@ import { GoalContext } from '../../context/GoalContext';
 
 const DashboardScreen = ({ navigation }: Navigation) => {
     const { progress, fetching, fetchPersonalGoal }: any = useContext(GoalContext);
-    // const renderOption = ({ item }: any) => (
-    //     <CustomRecord
-    //         message={ item.message }
-    //         phone={ item.phone }
-    //         title={ item.title }
-    //     />
-    // );
     
     useEffect(() => {
         fetchPersonalGoal()
@@ -29,23 +22,30 @@ const DashboardScreen = ({ navigation }: Navigation) => {
 
     const RenderSpeedometer = () => {
         return (
-            <View style={{ marginTop: 15 }}>
-                <View style={{ height: 220 }}>
-                    <RNSpeedometer 
-                        value={progress.policies_sold_amount} 
-                        size={300}
-                        minValue={0}
-                        maxValue={progress.goal}
-                        labels={ SPEEDOMETER_LABELS }
-                        innerCircleStyle={{ backgroundColor: '#F5F5F5' }}
+            progress.goal
+            ?   <View style={{ marginTop: 15 }}>
+                    <View style={{ height: 220 }}>
+                        <RNSpeedometer 
+                            value={progress.policies_sold_amount} 
+                            size={300}
+                            minValue={0}
+                            maxValue={progress.goal}
+                            labels={ SPEEDOMETER_LABELS }
+                            innerCircleStyle={{ backgroundColor: '#F5F5F5' }}
+                        />
+                    </View>
+                    <ProgressBar 
+                        current={progress.policies_sold_amount} 
+                        total={progress.goal} 
+                        percentage={progress.goal_percentage} 
                     />
                 </View>
-                <ProgressBar 
-                    current={progress.policies_sold_amount} 
-                    total={progress.goal} 
-                    percentage={progress.goal_percentage} 
-                />
-            </View>
+            :   <View style={{ marginVertical: 15 }}>
+                    <Text 
+                        style={{ color: '#005691', fontSize: 20, textAlign: 'center' }}>
+                            Aun no ha asignado su meta personal.
+                    </Text>
+                </View>
         )
     }
 
@@ -126,12 +126,7 @@ const DashboardScreen = ({ navigation }: Navigation) => {
                         </View>
                     </TouchableOpacity>
                 </View>
-                {/* <FlatList
-                    data={ records ? records : listRecords }
-                    renderItem={ renderOption }
-                    keyExtractor={ item => item.id }
-                    showsVerticalScrollIndicator={ false }
-                /> */}
+
             </ScrollView>
 
         </KeyboardAvoidingView>

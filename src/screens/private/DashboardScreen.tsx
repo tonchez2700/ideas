@@ -33,7 +33,9 @@ const DashboardScreen = ({ navigation }: Navigation) => {
         setRefreshing(true);
         wait(2000).then(() => setRefreshing(false));
     }, []);
+    console.log("-----salto-----");
 
+    ;
 
     useEffect(() => {
         // fetchPersonalGoal()
@@ -42,23 +44,15 @@ const DashboardScreen = ({ navigation }: Navigation) => {
     }, [])
 
     const RenderSpeedometer = () => {
-        return (
-            <FlatList
-                data={progress}
-                initialNumToRender={3}
-                extraData={() => fetchGame()}
-                maxToRenderPerBatch={15}
-                updateCellsBatchingPeriod={50}
-                keyExtractor={item => `${item.id}`}
-                onEndReachedThreshold={0.5}
-                onEndReached={() => console.log('load more')}
-                renderItem={({ item, index }) => {
-                    return (
 
+        return (
+            progress.map((item: any, i: number) => {
+                return (
+                    <View key={item.id}>
                         <AccordionItem
                             isRTL={true}
                             taco={
-                                index == 0 || index == 1
+                                i == 0 || i == 1
 
                             }
                             key={item.id}
@@ -139,10 +133,9 @@ const DashboardScreen = ({ navigation }: Navigation) => {
                             }
                             animationDuration={400}
                         />
-                    )
-
-                }}
-            />
+                    </View>
+                )
+            })
         )
     }
 
@@ -167,7 +160,11 @@ const DashboardScreen = ({ navigation }: Navigation) => {
                     />
                 }>
                 {
-                    RenderSpeedometer()
+                    progress != ''
+                        ?
+                        RenderSpeedometer()
+                        :
+                        null
                 }
                 <View style={styles.container_views}>
                     <TouchableOpacity activeOpacity={colors.opacity} onPress={() => navigation.navigate('Directorio')} style={styles.body_card}>

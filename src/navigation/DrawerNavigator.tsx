@@ -122,7 +122,7 @@ const DrawerNavigator = () => {
       <Drawer.Screen name='Agenda' component={ ScheduleStack } />
       <Drawer.Screen name='Bitácora' component={ BinacleStack } />
       <Drawer.Screen name='Solicitudes' component={ RequestScreen } />
-      <Drawer.Screen name='Score' component={ ScoreScreen } />
+      <Drawer.Screen name='Top 10' component={ ScoreScreen } />
       <Drawer.Screen name='Biblioteca' component={ LibraryStack } />
     </Drawer.Navigator>
   );

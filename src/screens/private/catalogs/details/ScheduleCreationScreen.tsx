@@ -47,7 +47,7 @@ const initialState = {
 }
 
 const datePickerReducer = (state: RequestInitialState = initialState, action: RequestActions): RequestInitialState => {
-    switch(action.type){
+    switch (action.type) {
         case 'FETCHING_DATA':
             return {
                 ...state,
@@ -113,88 +113,87 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
         const timeOutId = setTimeout(() => handleSearchProspects(prospect), 200);
         return () => clearTimeout(timeOutId);
     }, [prospect])
-    
+
     const handleSetSelectedProspect = (prospect: any) => {
         setVisibility(true);
-        dispatch({ type: 'SET_SELECTED_PROSPECT', payload: { prospect }  })
+        dispatch({ type: 'SET_SELECTED_PROSPECT', payload: { prospect } })
         onChange(`${prospect.name} ${prospect.second_surname}`, 'prospect')
     }
 
     const handleSearchProspects = (value: string) => {
-        if(value.length > 3){
+        if (value.length > 3) {
             setVisibility(false);
             const filtered = filterObj(value, 'name', state.prospects.list);
-            dispatch({ type: 'SET_FILTERS', payload: { filtered }  })
-        }else if(value.trim().length === 0){
+            dispatch({ type: 'SET_FILTERS', payload: { filtered } })
+        } else if (value.trim().length === 0) {
             dispatch({ type: 'RESET_FILTERS' })
         }
-        
+
     }
 
-    const handleAddReques = async(prospect: string, appointmentType: any, duration: string, date: string, time: string) => {
+    const handleAddReques = async (prospect: string, appointmentType: any, duration: string, date: string, time: string) => {
         try {
             const validated = validateRequestData(prospect, appointmentType, duration, date, time);
-            if(!validated.error){
+            if (!validated.error) {
                 //const filtered = filterObj(prospect, 'name', state.prospects.list);
-                dispatch({ type: 'FETCHING_DATA', payload: { isFetching: true }  })
+                dispatch({ type: 'FETCHING_DATA', payload: { isFetching: true } })
                 const localStorage = await AsyncStorage.getItem('userIdeas');
                 const user = localStorage != null ? JSON.parse(localStorage) : null
                 const request = {
                     appointment_date: moment(date, "DD-MM-YYYY").format("YYYY-MM-DD"),
                     appointment_hour: `${time}:00`,
                     duration: duration,
-                    agent_id: user.id,
+                    agent_id: user.agent_id,
                     is_done: "0",
                     prospect_id: "1",
                     appointment_type_id: appointmentType
                 }
                 const { data } = await ideasApi.post('/appointments', request);
-                console.log("Respuesta del server", data)
-                dispatch({ type: 'FETCHING_DATA', payload: { isFetching: false }  })
-                if(data){
+                dispatch({ type: 'FETCHING_DATA', payload: { isFetching: false } })
+                if (data) {
                     navigation.navigate('ScheduleList')
-                }else{
+                } else {
                     throwAlert("Error", "No ha sido posible guardar el registro.");
                 }
-            }else{
+            } else {
                 throwAlert("Error", validated.message);
             }
         } catch (error) {
             throwAlert("Error", "El servico por el momento no está disponible favor de intentarlo mas tarde");
-        }        
+        }
     }
 
     const validateRequestData = (prospect: string, appointmentType: string, duration: string, date: string, time: string) => {
         let result = { error: false, message: '' }
-        if(prospect.trim() === '')
+        if (prospect.trim() === '')
             return { error: true, message: "Es necesario que seleccione un contacto valido de la lista de opciones." }
 
-        if(appointmentType === null)
+        if (appointmentType === null)
             return { error: true, message: "Es necesario que seleccione un tipo de cita." }
 
-        if(duration.trim() === '')
+        if (duration.trim() === '')
             return { error: true, message: "Es necesario que introdusca la duración de la cita." }
 
-        if(date.trim() === '')
+        if (date.trim() === '')
             return { error: true, message: "Es necesario que introdusca una fecha." }
 
-        if(time.trim() === '')
+        if (time.trim() === '')
             return { error: true, message: "Es necesario que capture la hora de la cita." }
 
         return result;
 
     }
 
-    const onInit = async() => {
+    const onInit = async () => {
         try {
-            dispatch({ type: 'FETCHING_DATA', payload: { isFetching: true }  })
+            dispatch({ type: 'FETCHING_DATA', payload: { isFetching: true } })
             /**
              * OBTENEMOS EL LISTADO DE PROSPECTOS
              */
             const localStorage = await AsyncStorage.getItem('userIdeas');
             const user = localStorage != null ? JSON.parse(localStorage) : null
             const { data: prospects }: any = await ideasApi.get<ProspectsResponse>(`/prospects`, {
-                params: { agent_id: user.id }
+                params: { agent_id: user.agent_id }
             });
 
             /**
@@ -203,33 +202,33 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
             const { data: appointmentTypes }: any = await ideasApi.get(`/appointment_types`);
             let list: any[] = []
             appointmentTypes.map((item: any, i: number) => {
-                list = [ 
-                    ...list, 
+                list = [
+                    ...list,
                     {
                         label: item.name,
                         value: item.id
                     }
                 ]
             })
-            dispatch({ 
-                type: 'SET_INITIAL_DATA', 
-                payload: { 
+            dispatch({
+                type: 'SET_INITIAL_DATA',
+                payload: {
                     prospects,
                     appointmentTypes: list
-                }  
+                }
             })
         } catch (error) {
-            dispatch({ 
-                type: 'SET_ERROR_STATE', 
-                payload: { 
+            dispatch({
+                type: 'SET_ERROR_STATE',
+                payload: {
                     error: true,
                     message: "Por el momento el servicio no esta disponible, favor de intentarlo mas tarde."
-                }  
+                }
             })
         }
-        
-        
-        
+
+
+
     }
 
     const handleVisibilityDatePicker = (type: string) => {
@@ -241,133 +240,133 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
         const format = type === "date" ? "DD-MM-YYYY" : "HH:mm";
         const fomatedDate = moment(date).format(format)
         setVisibilityDateTimePicket(false);
-        if(type === "date"){
+        if (type === "date") {
             onChange(fomatedDate, "appointment_date")
-        }else{
+        } else {
             onChange(fomatedDate, "appointment_hour")
         }
     }
 
     const getFormatedDate = (type: string) => {
-        if(appointment_date !== '' && appointment_hour !== ''){
+        if (appointment_date !== '' && appointment_hour !== '') {
             const format = type === "date" ? "DD-MM-YYYY" : "HH:mm"
             const currentDate = type === "date" ? appointment_date : appointment_hour
             return new Date(moment(currentDate, format).format())
         }
-        return new Date();        
+        return new Date();
     }
 
     const IosDatePicket = () => {
-      return (
-        <View>
-          <Text style={{fontSize: 20, marginBottom: 10, textAlign: 'center'}}>Fecha</Text>
-          <DateTimePicker 
-            display="inline"
-            minimumDate={new Date()}
-            value={appointment_date}
-            onChange={(event: any, date: any) => onChange(date, 'appointment_date')}
-          />
-          <Text style={{fontSize: 20, marginBottom: 10, textAlign: 'center'}}>Hora</Text>
-          <DateTimePicker
-            mode="time" 
-            display="spinner"
-            value={appointment_hour}
-            onChange={(event: any, date: any) => onChange(date, 'appointment_hour')}
-          />
-        </View>
-      );
+        return (
+            <View>
+                <Text style={{ fontSize: 20, marginBottom: 10, textAlign: 'center' }}>Fecha</Text>
+                <DateTimePicker
+                    display="inline"
+                    minimumDate={new Date()}
+                    value={appointment_date}
+                    onChange={(event: any, date: any) => onChange(date, 'appointment_date')}
+                />
+                <Text style={{ fontSize: 20, marginBottom: 10, textAlign: 'center' }}>Hora</Text>
+                <DateTimePicker
+                    mode="time"
+                    display="spinner"
+                    value={appointment_hour}
+                    onChange={(event: any, date: any) => onChange(date, 'appointment_hour')}
+                />
+            </View>
+        );
     }
 
     const AndroidDatePicket = () => {
-      return (
-        <View>
+        return (
+            <View>
 
-            <Text style={{fontSize: 20, marginBottom: 10}}>Fecha</Text>
-            <TouchableOpacity
-                onPress={() => handleVisibilityDatePicker('date')}
-            >
-                <CustomInput
-                    maxLength={10}
-                    keyboardType='numeric'
-                    editable = {false}
-                    value={ appointment_date }
-                />
-    
-            </TouchableOpacity>
+                <Text style={{ fontSize: 20, marginBottom: 10 }}>Fecha</Text>
+                <TouchableOpacity
+                    onPress={() => handleVisibilityDatePicker('date')}
+                >
+                    <CustomInput
+                        maxLength={10}
+                        keyboardType='numeric'
+                        editable={false}
+                        value={appointment_date}
+                    />
 
-            <Text style={{fontSize: 20, marginBottom: 10}}>Hora</Text>
-            <TouchableOpacity
-                onPress={() => handleVisibilityDatePicker('time')}
-            >
-                <CustomInput
-                    maxLength={10}
-                    keyboardType='numeric'
-                    editable = {false}
-                    value={ appointment_hour }
-                />
-    
-            </TouchableOpacity>
-            {visibilityDateTimePicket
-                ?   <DateTimePicker 
+                </TouchableOpacity>
+
+                <Text style={{ fontSize: 20, marginBottom: 10 }}>Hora</Text>
+                <TouchableOpacity
+                    onPress={() => handleVisibilityDatePicker('time')}
+                >
+                    <CustomInput
+                        maxLength={10}
+                        keyboardType='numeric'
+                        editable={false}
+                        value={appointment_hour}
+                    />
+
+                </TouchableOpacity>
+                {visibilityDateTimePicket
+                    ? <DateTimePicker
                         mode={datePickerType}
                         minimumDate={new Date()}
-                        value={getFormatedDate(datePickerType)} 
+                        value={getFormatedDate(datePickerType)}
                         onChange={(event: any, date: any) => {
-                            if(event.type === "dismissed"){
+                            if (event.type === "dismissed") {
                                 setVisibilityDateTimePicket(!visibilityDateTimePicket)
-                            }else{
+                            } else {
                                 setDateValue(date, datePickerType)
                             }
                         }}
                     />
-                :   null
-            }
-            
-        </View>
-      );
+                    : null
+                }
+
+            </View>
+        );
     }
 
     return (
         <KeyboardAvoidingView
-            behavior={ (Platform.OS === 'ios') ? 'padding' : 'height' }
-            style={ general.fullScreen }
+            behavior={(Platform.OS === 'ios') ? 'padding' : 'height'}
+            style={general.fullScreen}
         >
             <CustomHeader
-                isHome={ true }
-                navigation={ navigation }
-                title='Agreagr cita'
+                isHome={true}
+                navigation={navigation}
+                title='Agregar cita'
             />
 
             {state.isFetching
-            ?   <ActivityIndicator size="small" color="#0000ff" />
-            :   <ScrollView
-                    showsVerticalScrollIndicator={ false }
-                    style={[ general.global_margin, { marginVertical: 33, }]}
+                ? <ActivityIndicator size="small" color="#0000ff" />
+                : <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    style={[general.global_margin, { marginVertical: 33, }]}
                 >
 
                     <View>
-                      <Text style={{fontSize: 20, marginBottom: 10}}>Contácto</Text>
-                      <Autocomplete
-                          hideResults={visibility}
-                          data={state.prospects.filtered}
-                          value={prospect}
-                          onChangeText={(value: string) => onChange(value, 'prospect')}
-                          containerStyle={{ marginBottom: 15 }}
-                          flatListProps={{
-                              keyExtractor: (_: any, idx: any) => idx,
-                              renderItem: ({ item }: any) => {
-                                  return (<TouchableOpacity
-                                      onPress={ () => handleSetSelectedProspect(item) }
-                                      style={{ height: 40, alignItems: 'center', justifyContent: 'center' }}
-                                  >
-                                      <Text style={{ fontSize: 20 }}>{item.name} {item.second_surname}</Text>
-                                  </TouchableOpacity>)
-                              },
-                          }}
-                      />
+                        <Text style={{ fontSize: 20, marginBottom: 10 }}>Contácto</Text>
+                        <Autocomplete
+                            hideResults={visibility}
+                            data={state.prospects.filtered}
+                            value={prospect}
+                            onChangeText={(value: string) => onChange(value, 'prospect')}
+                            containerStyle={{ marginBottom: 15 }}
+                            flatListProps={{
+                                keyExtractor: (_: any, idx: any) => idx,
+                                renderItem: ({ item }: any) => {
+                                    return (<TouchableOpacity
+                                        onPress={() => handleSetSelectedProspect(item)}
+                                        style={{ height: 40, alignItems: 'center', justifyContent: 'center' }}
+                                    >
+                                        <Text style={{ fontSize: 20 }}>{item.name} {item.second_surname}</Text>
+                                    </TouchableOpacity>)
+                                },
+                            }}
+                        />
                     </View>
-                    
-                    <Text style={{fontSize: 20, marginBottom: 10}}>Tipo de cita</Text>
+
+                    <Text style={{ fontSize: 20, marginBottom: 10 }}>Tipo de cita</Text>
                     <DropDownPicker
                         placeholder="Selecciones una opción"
                         open={open}
@@ -385,23 +384,23 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
                         }}
                     />
 
-                    <Text style={{fontSize: 20, marginBottom: 10}}>Duración</Text>
+                    <Text style={{ fontSize: 20, marginBottom: 10 }}>Duración</Text>
                     <CustomInput
                         keyboardType='numeric'
                         maxLength={2}
-                        onChangeText={ (value: string) => onChange(value, 'duration') }
+                        onChangeText={(value: string) => onChange(value, 'duration')}
                         placeholder='Duración (horas)'
-                        value={ duration }
+                        value={duration}
                     />
 
                     {
-                      Platform.OS === 'ios' 
-                      ? IosDatePicket() 
-                      : AndroidDatePicket() 
+                        Platform.OS === 'ios'
+                            ? IosDatePicket()
+                            : AndroidDatePicket()
                     }
 
                     <CustomButton
-                        onPress={ () => handleAddReques(prospect, appointmentType, duration, appointment_date, appointment_hour) }
+                        onPress={() => handleAddReques(prospect, appointmentType, duration, appointment_date, appointment_hour)}
                         title='Agregar'
                     />
 

@@ -6,8 +6,9 @@ import { GoalReducer, GoalState } from '../reducers/GoalReducer';
 
 type GoalContextProps = {
     fetching: boolean,
-    updatePersonalGoal: (personalGoal: string) => Promise<void>;  
+    updatePersonalGoal: (personalGoal: string, idGame: number) => Promise<void>;
     fetchPersonalGoal: () => void;
+    fetchGame: () => void;
     setModalVisibilityState: (visibility: boolean) => void;
 }
 
@@ -17,51 +18,49 @@ const goalInitialState: GoalState = {
     message: '',
     modalVisible: false,
     personalGoal: '',
-    progress: {
-        policies_sold_amount: 500,
-        goal: 1000,
-        goal_percentage: 50,
-    }
+    progress: '',
 }
 
 export const GoalContext = createContext({} as GoalContextProps);
 
-export const GoalProvider = ({ children }: any ) => {
+export const GoalProvider = ({ children }: any) => {
     const [state, dispatch] = useReducer(GoalReducer, goalInitialState);
 
-    const updatePersonalGoal = async(personalGoal: string) => {
+    const updatePersonalGoal = async (personalGoal: string, idGame: number) => {
         try {
-            if(personalGoal !== ''){
+            if (personalGoal !== '') {
                 dispatch({ type: 'goal/fetching', payload: { fetching: true } })
                 const localStorage = await AsyncStorage.getItem('userIdeas');
                 const user = localStorage != null ? JSON.parse(localStorage) : null
-                const { data }: any = await ideasApi.put(`/goals/${user.id}`, { "goal": personalGoal })
-                if(typeof data.status !== 'undefined' && !data.status){
+                const { data }: any = await ideasApi.put(`/goals/${user.agent_id}/game/${idGame}`, { "goal": personalGoal })
+
+                if (typeof data.status !== 'undefined' && !data.status) {
                     Alert.alert(
                         "Error al actualizar",
                         "Ya ha asignado una meta personal.",
                         [
                             {
-                                text: "Aceptar", 
+                                text: "Aceptar",
                                 onPress: () => dispatch({ type: 'goal/set_modal_visibility_state', payload: { modalVisible: false } })
                             }
                         ]
                     );
-                }else{
+                } else {
                     Alert.alert(
                         "Actualizacion correcta",
                         "Se ha asignado su meta personal correctamente.",
                         [
                             {
-                                text: "Aceptar", 
-                                onPress: () => dispatch({ 
-                                    type: 'goal/update_personal_goal', 
-                                    payload: { progress: recalculatePersonalGoal(0, parseInt(personalGoal)) } })
+                                text: "Aceptar",
+                                onPress: () => dispatch({
+                                    type: 'goal/update_personal_goal',
+                                    payload: { fetching: false }
+                                })
                             }
                         ]
                     );
                 }
-            }else{
+            } else {
                 Alert.alert("Es necesario que introdusca su meta personal.");
             }
 
@@ -72,7 +71,7 @@ export const GoalProvider = ({ children }: any ) => {
         }
     }
 
-    const recalculatePersonalGoal = (personalGoal: number, goal: number) => {        
+    const recalculatePersonalGoal = (personalGoal: number, goal: number) => {
         return {
             policies_sold_amount: personalGoal,
             goal: goal,
@@ -80,13 +79,25 @@ export const GoalProvider = ({ children }: any ) => {
         }
     }
 
-    const fetchPersonalGoal = async() => {
+    const fetchPersonalGoal = async () => {
         try {
             dispatch({ type: 'goal/fetching', payload: { fetching: true } })
             const localStorage = await AsyncStorage.getItem('userIdeas');
             const user = localStorage != null ? JSON.parse(localStorage) : null
-            const { data }: any = await ideasApi.get(`/goals/calculatepercentage/${user.id}`)
+            const { data }: any = await ideasApi.get(`/games/calculatepercentage/${user.agent_id}`)
             dispatch({ type: 'goal/update_personal_goal', payload: { progress: data } })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const fetchGame = async () => {
+        try {
+            dispatch({ type: 'goal/fetching', payload: { fetching: true } })
+            const localStorage = await AsyncStorage.getItem('userIdeas');
+            const user = localStorage != null ? JSON.parse(localStorage) : null
+            const { data }: any = await ideasApi.get(`/games/getcurrentgamesinformation/${user.agent_id}`)
+            dispatch({ type: 'goal/set_progress_gamen', payload: { progress: data } })
         } catch (error) {
             console.log(error)
         }
@@ -100,10 +111,11 @@ export const GoalProvider = ({ children }: any ) => {
         <GoalContext.Provider value={{
             ...state,
             fetchPersonalGoal,
+            fetchGame,
             updatePersonalGoal,
             setModalVisibilityState,
         }}>
-            { children }
+            {children}
         </GoalContext.Provider>
     )
 }

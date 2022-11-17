@@ -39,7 +39,7 @@ export const ScheduleProvider = ({ children }: any ) => {
             const localStorage = await AsyncStorage.getItem('userIdeas');
             const user = localStorage != null ? JSON.parse(localStorage) : null
             const { data }: any = await ideasApi.get<ScheduleResponse>(`/appointments`, {
-                params: { agent_id: user.id }
+                params: { agent_id: user.agent_id }
             });
             if(data.length > 0){
                 const schedules: AgendaScheduleDataType = getAgendaScheduleFormatByAppointmentsResponse(data)

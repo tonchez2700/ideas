@@ -29,7 +29,7 @@ const LibraryDetailScreen = ({ route, navigation }: Props) => {
             <ScrollView
                 showsVerticalScrollIndicator={ false }
             >
-                <Image resizeMode='stretch' source={{ uri: item?.url_image }} style={{ height: 250, position: 'relative', width: '100%' }} />
+                <Image resizeMode='stretch' source={{ uri: `data:image/jpeg;base64,${item?.url_image}` }} style={{ height: 250, position: 'relative', width: '100%' }} />
                 <View
                     style={[ general.global_margin, general.marginVertical ]}
                 >

@@ -4,22 +4,19 @@ import { AgendaDataType } from '../helpers/interfaces/appTypes';
 
 export interface GoalState {
     error: boolean,
-    fetching:   boolean,
+    fetching: boolean,
     message: string | unknown,
     modalVisible: boolean,
     personalGoal: string,
-    progress: {
-        policies_sold_amount: number,
-        goal: number,
-        goal_percentage: number,
-    }
+    progress: string,
 }
 
 type GoalActions =
-    | { type: 'goal/fetching', payload: { fetching: boolean }}
-    | { type: 'goal/set_error', payload: { message: string | unknown }}
-    | { type: 'goal/update_personal_goal', payload: { progress: any }}
-    | { type: 'goal/set_modal_visibility_state', payload: { modalVisible: boolean }}
+    | { type: 'goal/fetching', payload: { fetching: boolean } }
+    | { type: 'goal/set_error', payload: { message: string | unknown } }
+    | { type: 'goal/update_personal_goal', payload: { fetching: boolean } }
+    | { type: 'goal/set_progress_gamen', payload: { progress: any } }
+    | { type: 'goal/set_modal_visibility_state', payload: { modalVisible: boolean } }
 
 
 export const GoalReducer = (state: GoalState, action: GoalActions): GoalState => {
@@ -38,8 +35,12 @@ export const GoalReducer = (state: GoalState, action: GoalActions): GoalState =>
         case 'goal/update_personal_goal':
             return {
                 ...state,
-                fetching: false,
+                fetching: action.payload.fetching,
                 modalVisible: false,
+            }
+        case 'goal/set_progress_gamen':
+            return {
+                ...state,
                 progress: action.payload.progress
             }
         case 'goal/set_modal_visibility_state':

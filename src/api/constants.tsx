@@ -1,1 +1,1 @@
-export const BASE_URL='https://development.ideas.zunit.mx/api';
+export const BASE_URL='https://app.ideaspatrimoniales.com/api';

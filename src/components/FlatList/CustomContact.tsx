@@ -1,51 +1,62 @@
-import React from 'react';
+import React, { useEffect, useCallback, useContext, useState } from 'react';
 import { Linking, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { todayString } from 'react-native-calendars/src/expandableCalendar/commons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icons from 'react-native-vector-icons/Ionicons';
-
+import { ProspectsContext } from '../../context/ProspectsContext';
 import { colors, general } from '../../theme/customTheme';
 
 export const CustomContact = (item: any) => {
     const callPhoneNumber = () => {
+        addPointCall(day, item.id, 1)
         let phoneNumber = '';
-        if(Platform.OS === 'android') {
-            phoneNumber = `tel: ${ item.phone }`;
+        if (Platform.OS === 'android') {
+            phoneNumber = `tel: ${item.phone}`;
         } else {
-            phoneNumber = `telprompt: ${ item.phone }`;
+            phoneNumber = `telprompt: ${item.phone}`;
         }
-  
+
         Linking.openURL(phoneNumber);
     }
+    const { prospects, loadProspects, addPointCall } = useContext(ProspectsContext);
+    const day = new Date();
 
     return (
-        <View style={[ styles.item_card, general.global_margin ]}>
+        <View style={[styles.item_card, general.global_margin]}>
             <View style={{ alignItems: 'center', flex: 1, flexDirection: 'row', height: '100%' }}>
-                <View style={ styles.icon_container }>
-                    <Icons color={ colors.gray_opacity } name='person-circle' size={ 50 } />
+                <View style={styles.icon_container}>
+                    <Icons color={colors.gray_opacity} name='person-circle' size={50} />
                 </View>
                 <View style={{ alignContent: 'center', flex: 1, paddingHorizontal: 24 }}>
-                    <Text style={ styles.info_title }>
-                        { item?.name + ' ' + item?.first_name }
+                    <Text style={styles.info_title}>
+                        {item?.name + ' ' + item?.first_name}
                     </Text>
-                    <Text style={ styles.info_text }>
-                        { item?.phone }
+                    <Text style={styles.info_text}>
+                        {item?.phone}
+                    </Text>
+                    <Text style={styles.info_text}>
+                         Tipo de prospecto: {item?.type}
                     </Text>
                 </View>
             </View>
-            <View style={ styles.info_container }>
+            <View style={styles.info_container}>
                 <TouchableOpacity
-                    activeOpacity={ colors.opacity }
-                    onPress={ () => Linking.openURL(`whatsapp://send?phone=52${ item.phone }`) }
-                    style={[ styles.social_icon, { backgroundColor: '#43AB11', marginRight: 10 }]}
+                    activeOpacity={colors.opacity}
+                    onPress={() => {
+                        addPointCall(day, item.id, 2)
+                        Linking.openURL(`whatsapp://send?phone=52${item.phone}`)
+                        
+                    }}
+                    style={[styles.social_icon, { backgroundColor: '#43AB11', marginRight: 10 }]}
                 >
-                    <Icon color={ colors.white } name='whatsapp' size={ 15 } />
+                    <Icon color={colors.white} name='whatsapp' size={15} />
                 </TouchableOpacity>
                 <TouchableOpacity
-                    activeOpacity={ colors.opacity }
-                    onPress={ callPhoneNumber }
-                    style={[ styles.social_icon, { backgroundColor: colors.primary, }]}
+                    activeOpacity={colors.opacity}
+                    onPress={callPhoneNumber}
+                    style={[styles.social_icon, { backgroundColor: colors.primary, }]}
                 >
-                    <Icon color={ colors.white } name='phone' size={ 15 } />
+                    <Icon color={colors.white} name='phone' size={15} />
                 </TouchableOpacity>
             </View>
         </View>

@@ -16,25 +16,26 @@ import { colors, general } from '../../../theme/customTheme';
 
 const ProspectsScreen = ({ navigation }: Navigation) => {
     const { user } = useContext(AuthContext);
-    const { prospects, loadProspects } = useContext(ProspectsContext);
+    const { prospects, loadProspects, addPointCall } = useContext(ProspectsContext);
     const agentId = user?.id;
 
     const [filterProspects, setFilterProspects] = useState();
     const [searchData, setSearchData] = useState(false);
 
+
     useEffect(() => {
         loadProspects()
     }, [])
-    
+
     const { search, onChange } = useForm({
         search: '',
     });
-    
+
     const clearInput = useCallback(() => onChangeText(''), []);
 
     const onChangeText = (value: string) => {
         onChange(value, 'search')
-        if(value) {
+        if (value) {
             const newData: any = prospects.filter((item: any) => {
                 const itemData = item.name ? item.name.toLowerCase() : ''.toLowerCase();
                 const numberData = item.phone && item.phone;
@@ -48,55 +49,57 @@ const ProspectsScreen = ({ navigation }: Navigation) => {
             setSearchData(false);
         }
     }
-    
+
     const renderOption = ({ item }: any) => (
         <CustomContact
-            name={ item.name }
-            first_name={ item.first_name }
-            phone={ item.phone }
+            name={item.name}
+            first_name={item.first_name}
+            phone={item.phone}
+            id={item.id}
+            type={item.policy_type}
         />
     );
 
     return (
         <KeyboardAvoidingView
-            behavior={ (Platform.OS === 'ios') ? 'padding' : 'height' }
-            style={ general.fullScreen }
+            behavior={(Platform.OS === 'ios') ? 'padding' : 'height'}
+            style={general.fullScreen}
         >
             <CustomHeader
-                isHome={ true }
-                navigation={ navigation }
+                isHome={true}
+                navigation={navigation}
                 title='DIRECTORIO'
             />
-            <View style={ general.global_margin }>
+            <View style={general.global_margin}>
                 <CustomInput
-                    nameIcon={ !searchData ? 'search' : 'close'}
-                    onChangeText={ onChangeText }
-                    onPress={ clearInput }
+                    nameIcon={!searchData ? 'search' : 'close'}
+                    onChangeText={onChangeText}
+                    onPress={clearInput}
                     placeholder='Buscar'
                     type='TERTIARY'
-                    value={ search }
+                    value={search}
                 />
             </View>
-            <View style={ general.fullScreen }>
+            <View style={general.fullScreen}>
                 {prospects.length > 0
-                ?   <FlatList
-                        data={ filterProspects ? filterProspects : prospects }
-                        renderItem={ renderOption }
-                        keyExtractor={ item => `${item.id}` }
-                        showsVerticalScrollIndicator={ false }
+                    ? <FlatList
+                        data={filterProspects ? filterProspects : prospects}
+                        renderItem={renderOption}
+                        keyExtractor={item => `${item.id}`}
+                        showsVerticalScrollIndicator={false}
                     />
-                :   <ActivityIndicator size="small" color="#0000ff" />}
+                    : <ActivityIndicator size="small" color="#0000ff" />}
             </View>
-                
+
             <TouchableOpacity
-                activeOpacity={ colors.opacity }
-                onPress={ () => navigation.navigate('ProspectScreen', agentId) }
-                style={ styles.add_button }
+                activeOpacity={colors.opacity}
+                onPress={() => navigation.navigate('ProspectScreen', agentId)}
+                style={styles.add_button}
             >
                 <Icon
-                    color={ colors.primary }
+                    color={colors.primary}
                     name='plus'
-                    size={ 18 }
+                    size={18}
                 />
             </TouchableOpacity>
         </KeyboardAvoidingView>

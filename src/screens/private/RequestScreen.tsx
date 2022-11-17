@@ -53,7 +53,7 @@ const initialState = {
 }
 
 const datePickerReducer = (state: RequestInitialState = initialState, action: RequestActions): RequestInitialState => {
-    switch(action.type){
+    switch (action.type) {
         case 'FETCHING_DATA':
             return {
                 ...state,
@@ -114,33 +114,33 @@ const RequestScreen = ({ navigation }: Navigation) => {
         const timeOutId = setTimeout(() => handleSearchProspects(prospect), 200);
         return () => clearTimeout(timeOutId);
     }, [prospect])
-    
+
     const handleSetSelectedProspect = (prospect: any) => {
         setVisibility(true);
-        dispatch({ type: 'SET_SELECTED_PROSPECT', payload: { prospect }  })
+        dispatch({ type: 'SET_SELECTED_PROSPECT', payload: { prospect } })
         setProspect(`${prospect.name} ${prospect.second_surname}`)
     }
 
     const handleSearchProspects = (value: string) => {
-        if(value.length > 3){
+        if (value.length > 3) {
             setVisibility(false);
             const filtered = filterObj(value, 'name', state.prospects.list);
-            dispatch({ type: 'SET_FILTERS', payload: { filtered }  })
-        }else if(value.trim().length === 0){
+            dispatch({ type: 'SET_FILTERS', payload: { filtered } })
+        } else if (value.trim().length === 0) {
             dispatch({ type: 'RESET_FILTERS' })
         }
-        
+
     }
 
-    const handleAddReques = async(prospect: string, policyType: any, policyNumber: string) => {
+    const handleAddReques = async (prospect: string, policyType: any, policyNumber: string) => {
         try {
             const validated: any = validateRequestData(policyType, policyNumber)
-            if(!validated.error){
-                dispatch({ type: 'FETCHING_DATA', payload: { isFetching: true }  })
+            if (!validated.error) {
+                dispatch({ type: 'FETCHING_DATA', payload: { isFetching: true } })
                 const localStorage = await AsyncStorage.getItem('userIdeas');
                 const user = localStorage != null ? JSON.parse(localStorage) : null
                 const request = {
-                    agent_id: user.id,
+                    agent_id: user.agent_id,
                     prospect_id: state.prospects.selected.id,
                     policy_type_id: policyType,
                     policy_status_id: 1,
@@ -149,47 +149,47 @@ const RequestScreen = ({ navigation }: Navigation) => {
                     pesos_amount: ""
                 }
                 const { data } = await ideasApi.post('/policies', request);
-                dispatch({ type: 'FETCHING_DATA', payload: { isFetching: false }  })
-                if(data){
+                dispatch({ type: 'FETCHING_DATA', payload: { isFetching: false } })
+                if (data) {
                     clearFormData()
                     navigation.navigate('Dashboard')
-                }else{
+                } else {
                     throwAlert("Error", "No ha sido posible guardar el registro.");
                 }
-            }else{
+            } else {
                 throwAlert("Error", validated.message);
             }
         } catch (error) {
             console.log(error);
-        }        
+        }
     }
 
     const validateRequestData = (policyType: any, policyNumber: string) => {
         let result = { error: false, message: '' }
-        
-        if(Object.keys(state.prospects.selected).length === 0)
+
+        if (Object.keys(state.prospects.selected).length === 0)
             return { error: true, message: "Es necesario que seleccione un contacto valido de la lista de opciones." }
 
-        if(policyType === null)
+        if (policyType === null)
             return { error: true, message: "Es necesario que seleccione un tipo de poliza." }
 
-        if(policyNumber.trim() === '')
+        if (policyNumber.trim() === '')
             return { error: true, message: "Es necesario que capture un número de póliza.." }
 
         return result;
 
     }
 
-    const onInit = async() => {
+    const onInit = async () => {
         try {
-            dispatch({ type: 'FETCHING_DATA', payload: { isFetching: true }  })
+            dispatch({ type: 'FETCHING_DATA', payload: { isFetching: true } })
             /**
              * OBTENEMOS EL LISTADO DE PROSPECTOS
              */
             const localStorage = await AsyncStorage.getItem('userIdeas');
             const user = localStorage != null ? JSON.parse(localStorage) : null
             const { data: prospects }: any = await ideasApi.get<ProspectsResponse>(`/prospects`, {
-                params: { agent_id: user.id }
+                params: { agent_id: user.agent_id }
             });
 
             /**
@@ -198,33 +198,33 @@ const RequestScreen = ({ navigation }: Navigation) => {
             const { data: policiesType }: any = await ideasApi.get<PolicyTypeResponse>(`/policy_types`);
             let list: any[] = []
             policiesType.map((item: any, i: number) => {
-                list = [ 
-                    ...list, 
+                list = [
+                    ...list,
                     {
                         label: item.name,
                         value: item.id
                     }
                 ]
             })
-            dispatch({ 
-                type: 'SET_INITIAL_DATA', 
-                payload: { 
+            dispatch({
+                type: 'SET_INITIAL_DATA',
+                payload: {
                     prospects,
                     policiesType: list
-                }  
+                }
             })
         } catch (error) {
-            dispatch({ 
-                type: 'SET_ERROR_STATE', 
-                payload: { 
+            dispatch({
+                type: 'SET_ERROR_STATE',
+                payload: {
                     error: true,
                     message: "Por el momento el servicio no esta disponible, favor de intentarlo mas tarde."
-                }  
+                }
             })
         }
-        
-        
-        
+
+
+
     }
 
     const clearFormData = () => {
@@ -235,22 +235,23 @@ const RequestScreen = ({ navigation }: Navigation) => {
 
     return (
         <KeyboardAvoidingView
-            behavior={ (Platform.OS === 'ios') ? 'padding' : 'height' }
-            style={ general.fullScreen }
+            behavior={(Platform.OS === 'ios') ? 'padding' : 'height'}
+            style={general.fullScreen}
         >
             <CustomHeader
-                isHome={ true }
-                navigation={ navigation }
+                isHome={true}
+                navigation={navigation}
                 title='SOLICITUDES'
             />
 
             {state.isFetching
-            ?   <ActivityIndicator size="small" color="#0000ff" />
-            :   <ScrollView
-                    showsVerticalScrollIndicator={ false }
-                    style={[ general.global_margin, { marginVertical: 33, }]}
+                ? <ActivityIndicator size="small" color="#0000ff" />
+                : <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    style={[general.global_margin, { marginVertical: 33, }]}
                 >
                     <View>
+                        <Text style={{ fontSize: 20, marginBottom: 10 }}>Contácto</Text>
                         <Autocomplete
                             hideResults={visibility}
                             data={state.prospects.filtered}
@@ -261,7 +262,7 @@ const RequestScreen = ({ navigation }: Navigation) => {
                                 keyExtractor: (_: any, idx: any) => idx,
                                 renderItem: ({ item }: any) => {
                                     return (<TouchableOpacity
-                                        onPress={ () => handleSetSelectedProspect(item) }
+                                        onPress={() => handleSetSelectedProspect(item)}
                                         style={{ height: 40, alignItems: 'center', justifyContent: 'center' }}
                                     >
                                         <Text style={{ fontSize: 20 }}>{item.name} {item.second_surname}</Text>
@@ -270,8 +271,11 @@ const RequestScreen = ({ navigation }: Navigation) => {
                             }}
                         />
                     </View>
+                    <Text style={{ fontSize: 20, marginBottom: 10 }}>Tipo de solicitud</Text>
                     <DropDownPicker
                         open={open}
+                        placeholder={'Seleccione una opción'}
+                        placeholderStyle={{color: 'gray'}}
                         value={policyType}
                         items={state.policiesType}
                         setOpen={setOpen}
@@ -285,13 +289,14 @@ const RequestScreen = ({ navigation }: Navigation) => {
                             color: '#23233C'
                         }}
                     />
+                    <Text style={{ fontSize: 20, marginBottom: 10 }}>Número de póliza</Text>
                     <CustomInput
-                        onChangeText={ (value: string) => onChange(value, 'policyNumber') }
+                        onChangeText={(value: string) => onChange(value, 'policyNumber')}
                         placeholder='Número de póliza'
-                        value={ policyNumber }
+                        value={policyNumber}
                     />
                     <CustomButton
-                        onPress={ () => handleAddReques(prospect, policyType, policyNumber) }
+                        onPress={() => handleAddReques(prospect, policyType, policyNumber)}
                         title='Agregar'
                     />
                 </ScrollView>}

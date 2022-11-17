@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { AuthReducer, AuthState } from '../reducers/AuthReducer';
+import { AuthReducer, AuthState } from '../reducers/authReducer';
 
 import ideasApi from '../api/ideasApi';
 import { LoginResponse, LoginData, RefreshTokenResponse, User } from '../helpers/interfaces/appInterfaces';
@@ -40,8 +40,10 @@ export const AuthProvider = ({ children }: any) => {
             const token = await AsyncStorage.getItem('token');
 
             if(!token) return dispatch({ type: 'notAuthenticated' });
-
+            
             const { data } = await ideasApi.get<RefreshTokenResponse>('/auth/refreshtoken');
+            console.log(data);
+            
             if(data.status !== true) {
                 dispatch({ type: 'notAuthenticated' })
             } else {

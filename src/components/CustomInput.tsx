@@ -20,7 +20,7 @@ interface Props {
     maxLength?:         numeric
 }
 
-const CustomInput = ({ maxLength=30, editable=true, autoCapitalize='none', keyboardType='default', icon, nameIcon, onChangeText, onPress, label, placeholder, secureTextEntry, type='PRIMARY', value }: Props) => {
+const CustomInput = ({ maxLength=60, editable=true, autoCapitalize='none', keyboardType='default', icon, nameIcon, onChangeText, onPress, label, placeholder, secureTextEntry, type='PRIMARY', value }: Props) => {
 
     return (
         <View style={[

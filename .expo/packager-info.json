@@ -2,9 +2,9 @@
   "devToolsPort": 19002,
   "expoServerPort": 19000,
   "packagerPort": 19000,
-  "expoServerNgrokUrl": "https://d8-49t.zunitmiguel.lemon-client.exp.direct",
-  "packagerNgrokUrl": "https://d8-49t.zunitmiguel.lemon-client.exp.direct",
-  "ngrokPid": 12308,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null,
   "packagerPid": null,
   "webpackServerPort": null
 }

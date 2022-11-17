@@ -5,40 +5,42 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { colors } from '../../theme/customTheme';
 
 export const CustomCard = (item: any) => {
+    console.log(item);
+
     return (
         <>
             {
-                <View style={ card.container }>
+                <View style={card.container}>
                     <TouchableOpacity
-                        activeOpacity={ colors.opacity }
-                        onPress={ () => item.navigation.navigate('LibraryDetail', item) }
-                        style={ card.card }
+                        activeOpacity={colors.opacity}
+                        onPress={() => item.navigation.navigate('LibraryDetail', item)}
+                        style={card.card}
                     >
-                        <View style={ card.content_image }>
+                        <View style={card.content_image}>
                             <Image
                                 resizeMode='cover'
-                                source={{ uri: item.url_image }}
-                                style={ card.card_image }
+                                source={{ uri: `data:image/jpeg;base64,${item.url_image}` }}
+                                style={card.card_image}
                             />
                         </View>
-                        <View style={ card.card_content }>
-                            <Text style={ card.content_title }>
-                                { item.name }
+                        <View style={card.card_content}>
+                            <Text style={card.content_title}>
+                                {item.name}
                             </Text>
                             <Text
-                                numberOfLines={ 3 }
-                                style={[ card.content_text, { marginBottom: 8, }]}
+                                numberOfLines={3}
+                                style={[card.content_text, { marginBottom: 8, }]}
                             >
-                                { item.description }
+                                {item.description}
                             </Text>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                <Text style={[ card.content_text, { color: colors.gray_opacity }]}>
-                                    Categoría: { item.category }
+                                <Text style={[card.content_text, { color: colors.gray_opacity }]}>
+                                    Categoría: {item.category}
                                 </Text>
                                 <Icon
                                     name='checkmark-circle'
-                                    color={ colors.primary }
-                                    size={ 18 }
+                                    color={colors.primary}
+                                    size={18}
                                 />
                             </View>
                         </View>

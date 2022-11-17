@@ -13,6 +13,7 @@ export interface AgentData {
     first_name:             string;
     second_surname:         string;
     phone:                  string;
+    policy_type_id:         string;
     agent_id:               any;
 }
 

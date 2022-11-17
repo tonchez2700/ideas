@@ -13,8 +13,8 @@ const ProgressBar = ({ current, total, percentage }: Props) => {
     return (
         <View style={{ width: '85%' }}>
             <View style={{ marginTop: 15, marginBottom: 5, flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ color: 'gray' }}>Progreso actual: {current}</Text>
-                <Text style={{ color: 'gray' }}>Meta: {total}</Text>
+                <Text style={{ color: 'gray' }}>Progreso actual: ${current}</Text>
+                <Text style={{ color: 'gray' }}>Meta: ${total}</Text>
             </View>
             <View>
                 <LinearProgress

@@ -368,7 +368,8 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
 
                     <Text style={{ fontSize: 20, marginBottom: 10 }}>Tipo de cita</Text>
                     <DropDownPicker
-                        placeholder="Selecciones una opción"
+                        placeholder="Seleccione una opción"
+                        placeholderStyle={{color: 'gray'}}
                         open={open}
                         value={appointmentType}
                         items={state.appointmentTypes}

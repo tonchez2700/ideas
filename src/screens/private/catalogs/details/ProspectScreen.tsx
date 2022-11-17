@@ -107,7 +107,8 @@ const ProspectScreen = ({ route, navigation }: Props) => {
                         open={open}
                         value={policyType}
                         items={TypeCat}
-                        placeholder="Selecciones una opción"
+                        placeholder="Seleccione una opción"
+                        placeholderStyle={{color: 'gray'}}
                         setOpen={setOpen}
                         onChangeValue={(value: number | any) => onChange(value, 'policy_type_id')}
                         setValue={setPolicyType}

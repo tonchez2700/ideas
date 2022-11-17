@@ -95,8 +95,8 @@ const DashboardScreen = ({ navigation }: Navigation) => {
                                     {
                                         <View>
 
-                                            <View style={{ margin: 10, flexDirection: "row", }}>
-                                                <View>
+                                            <View style={{ margin: 10, flexDirection: "column", }}>
+                                                <View style={{ justifyContent: 'center' }}>
                                                     <Text style={{ marginBottom: 25, color: "#005691", textAlign: 'center', fontSize: 15, fontWeight: '700' }}>CONOCE TU PROGRESO</Text>
                                                     {
 
@@ -120,14 +120,6 @@ const DashboardScreen = ({ navigation }: Navigation) => {
                                                                 innerCircleStyle={{ backgroundColor: '#F5F5F5' }}
                                                             />
                                                     }
-                                                </View>
-                                                <View style={{ alignItems: "center", marginLeft: 20 }}>
-                                                    <Text style={{ color: "#005691", fontSize: 15, fontWeight: '700' }}>INSIGNIAS</Text>
-                                                    <Image
-                                                        resizeMode='stretch'
-                                                        source={require('../../assets/images/insignias.png')}
-                                                        style={{ height: 155, width: 40, marginTop: 5 }}
-                                                    />
                                                 </View>
 
                                             </View>
@@ -200,7 +192,7 @@ const DashboardScreen = ({ navigation }: Navigation) => {
 
                     <TouchableOpacity activeOpacity={colors.opacity} onPress={() => navigation.navigate('Bitácora')} style={styles.body_card}>
                         <View style={styles.icon}>
-                            <Icon color={colors.white} name='bookmark' size={25} />
+                            <Icon color={colors.white} name='flag' size={25} />
                         </View>
                         <Text style={styles.subtitle}>Bitácora</Text>
                         <View style={styles.footer_card}>
@@ -208,13 +200,13 @@ const DashboardScreen = ({ navigation }: Navigation) => {
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity activeOpacity={colors.opacity} onPress={() => navigation.navigate('Solicitudes')} style={styles.body_card}>
+                    <TouchableOpacity activeOpacity={colors.opacity} onPress={() => navigation.navigate('Póliza')} style={styles.body_card}>
                         <View style={styles.icon}>
                             <Icon color={colors.white} name='file-contract' size={25} />
                         </View>
-                        <Text style={styles.subtitle}>Solicitudes</Text>
+                        <Text style={styles.subtitle}>Póliza</Text>
                         <View style={styles.footer_card}>
-                            <Text style={styles.title}>Solicitudes</Text>
+                            <Text style={styles.title}>Póliza</Text>
                         </View>
                     </TouchableOpacity>
 

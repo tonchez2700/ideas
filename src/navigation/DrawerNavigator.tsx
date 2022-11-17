@@ -121,7 +121,7 @@ const DrawerNavigator = () => {
       <Drawer.Screen name='Directorio' component={ DirectoryStack } />
       <Drawer.Screen name='Agenda' component={ ScheduleStack } />
       <Drawer.Screen name='Bitácora' component={ BinacleStack } />
-      <Drawer.Screen name='Solicitudes' component={ RequestScreen } />
+      <Drawer.Screen name='Póliza' component={ RequestScreen } />
       <Drawer.Screen name='Top 10' component={ ScoreScreen } />
       <Drawer.Screen name='Biblioteca' component={ LibraryStack } />
     </Drawer.Navigator>

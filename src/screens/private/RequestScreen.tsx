@@ -241,7 +241,7 @@ const RequestScreen = ({ navigation }: Navigation) => {
             <CustomHeader
                 isHome={true}
                 navigation={navigation}
-                title='SOLICITUDES'
+                title='PÓLIZA'
             />
 
             {state.isFetching
@@ -271,7 +271,7 @@ const RequestScreen = ({ navigation }: Navigation) => {
                             }}
                         />
                     </View>
-                    <Text style={{ fontSize: 20, marginBottom: 10 }}>Tipo de solicitud</Text>
+                    <Text style={{ fontSize: 20, marginBottom: 10 }}>Tipo</Text>
                     <DropDownPicker
                         open={open}
                         placeholder={'Seleccione una opción'}

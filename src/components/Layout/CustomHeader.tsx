@@ -89,16 +89,6 @@ export const CustomHomeHeader = ({ navigation }: Props) => {
                     <Text style={ header.text }>Hola, <Text style={{ fontWeight: 'normal' }}>{ user?.name }</Text></Text>
                     <Text style={ header.subText }>Sigue cumpliendo tus metas</Text>
                 </View>
-                <TouchableOpacity 
-                    onPress={() => setModalVisibilityState(!modalVisible) }
-                    style={{ justifyContent: 'center', marginLeft: 25, }}
-                >
-                    <Icon
-                        name='flag'
-                        color={ colors.white }
-                        size={ 25 }
-                    />
-                </TouchableOpacity>
             </View>
             {/* <CustomModal /> */}
             <View

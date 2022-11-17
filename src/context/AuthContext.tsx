@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }: any) => {
             if(!token) return dispatch({ type: 'notAuthenticated' });
             
             const { data } = await ideasApi.get<RefreshTokenResponse>('/auth/refreshtoken');
-            console.log(data);
+         
             
             if(data.status !== true) {
                 dispatch({ type: 'notAuthenticated' })

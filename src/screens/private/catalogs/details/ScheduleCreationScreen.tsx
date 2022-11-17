@@ -24,6 +24,7 @@ interface RequestInitialState {
         list: Array<any>,
         filtered: Array<any>,
     }
+    prospect_id: number,
 };
 
 type RequestActions =
@@ -32,6 +33,7 @@ type RequestActions =
     | { type: 'SET_INITIAL_DATA', payload: { prospects: Array<any>, appointmentTypes: Array<any> } }
     | { type: 'SET_FILTERS', payload: { filtered: Array<any> } }
     | { type: 'SET_SELECTED_PROSPECT', payload: { prospect: Object } }
+    | { type: 'SET_SELECTED_ID', payload: { id: number } }
     | { type: 'RESET_FILTERS' }
 
 const initialState = {
@@ -42,6 +44,7 @@ const initialState = {
         list: [],
         filtered: [],
     },
+    prospect_id: 0,
     isFetching: false,
     appointmentTypes: []
 }
@@ -75,6 +78,11 @@ const datePickerReducer = (state: RequestInitialState = initialState, action: Re
                 ...state,
                 prospects: { ...state.prospects, selected: action.payload.prospect, filtered: [] },
             }
+        case 'SET_SELECTED_ID':
+            return {
+                ...state,
+                prospect_id: action.payload.id
+            }
         case 'SET_INITIAL_DATA':
             return {
                 ...state,
@@ -96,11 +104,12 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
     const [datePickerType, setDatePickerType] = useState('date');
     const [appointmentType, setAppointmentType] = useState(null);
 
-    const { prospect, duration, appointment_date, appointment_hour, onChange } = useForm({
+    const { prospect, prospect_id, duration, appointment_date, appointment_hour, onChange } = useForm({
         prospect: '',
         duration: '',
         appointment_date: "",
         appointment_hour: "",
+        prospect_id: '',
         // appointment_date: new Date(), Formato para IOS
         // appointment_hour: new Date(),
     });
@@ -114,10 +123,13 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
         return () => clearTimeout(timeOutId);
     }, [prospect])
 
-    const handleSetSelectedProspect = (prospect: any) => {
+    console.log(state.prospect_id);
+
+    const handleSetSelectedProspect = (prospect: any, id: number) => {
         setVisibility(true);
         dispatch({ type: 'SET_SELECTED_PROSPECT', payload: { prospect } })
         onChange(`${prospect.name} ${prospect.second_surname}`, 'prospect')
+        dispatch({ type: 'SET_SELECTED_ID', payload: { id } })
     }
 
     const handleSearchProspects = (value: string) => {
@@ -131,7 +143,7 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
 
     }
 
-    const handleAddReques = async (prospect: string, appointmentType: any, duration: string, date: string, time: string) => {
+    const handleAddReques = async (prospect_id: number, appointmentType: any, duration: string, date: string, time: string) => {
         try {
             const validated = validateRequestData(prospect, appointmentType, duration, date, time);
             if (!validated.error) {
@@ -145,7 +157,7 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
                     duration: duration,
                     agent_id: user.agent_id,
                     is_done: "0",
-                    prospect_id: "1",
+                    prospect_id: prospect_id,
                     appointment_type_id: appointmentType
                 }
                 const { data } = await ideasApi.post('/appointments', request);
@@ -356,7 +368,7 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
                                 keyExtractor: (_: any, idx: any) => idx,
                                 renderItem: ({ item }: any) => {
                                     return (<TouchableOpacity
-                                        onPress={() => handleSetSelectedProspect(item)}
+                                        onPress={() => handleSetSelectedProspect(item, item.id)}
                                         style={{ height: 40, alignItems: 'center', justifyContent: 'center' }}
                                     >
                                         <Text style={{ fontSize: 20 }}>{item.name} {item.second_surname}</Text>
@@ -369,7 +381,7 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
                     <Text style={{ fontSize: 20, marginBottom: 10 }}>Tipo de cita</Text>
                     <DropDownPicker
                         placeholder="Seleccione una opción"
-                        placeholderStyle={{color: 'gray'}}
+                        placeholderStyle={{ color: 'gray' }}
                         open={open}
                         value={appointmentType}
                         items={state.appointmentTypes}
@@ -401,7 +413,7 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
                     }
 
                     <CustomButton
-                        onPress={() => handleAddReques(prospect, appointmentType, duration, appointment_date, appointment_hour)}
+                        onPress={() => handleAddReques(state.prospect_id, appointmentType, duration, appointment_date, appointment_hour)}
                         title='Agregar'
                     />
 

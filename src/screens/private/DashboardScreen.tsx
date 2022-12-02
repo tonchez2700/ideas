@@ -33,9 +33,6 @@ const DashboardScreen = ({ navigation }: Navigation) => {
         setRefreshing(true);
         wait(2000).then(() => setRefreshing(false));
     }, []);
-    console.log("-----salto-----");
-
-    ;
 
     useEffect(() => {
         // fetchPersonalGoal()

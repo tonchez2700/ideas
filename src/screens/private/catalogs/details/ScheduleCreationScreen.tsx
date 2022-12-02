@@ -110,7 +110,7 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
         appointment_date: "",
         appointment_hour: "",
         prospect_id: '',
-        // appointment_date: new Date(), Formato para IOS
+        // appointment_date: new Date(),
         // appointment_hour: new Date(),
     });
 
@@ -123,7 +123,6 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
         return () => clearTimeout(timeOutId);
     }, [prospect])
 
-    console.log(state.prospect_id);
 
     const handleSetSelectedProspect = (prospect: any, id: number) => {
         setVisibility(true);
@@ -268,7 +267,7 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
         return new Date();
     }
 
-    const IosDatePicket = () => {
+    const IosDatePicket = () =>  {
         return (
             <View>
                 <Text style={{ fontSize: 20, marginBottom: 10, textAlign: 'center' }}>Fecha</Text>
@@ -321,6 +320,8 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
                 {visibilityDateTimePicket
                     ? <DateTimePicker
                         mode={datePickerType}
+                        themeVariant="dark"
+                        display={Platform.OS === "ios"  ? "inline" : "default"}
                         minimumDate={new Date()}
                         value={getFormatedDate(datePickerType)}
                         onChange={(event: any, date: any) => {
@@ -407,9 +408,9 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
                     />
 
                     {
-                        Platform.OS === 'ios'
-                            ? IosDatePicket()
-                            : AndroidDatePicket()
+                        // Platform.OS === 'ios'
+                        //     ? IosDatePicket()
+                        AndroidDatePicket()
                     }
 
                     <CustomButton

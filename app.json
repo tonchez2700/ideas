@@ -2,7 +2,7 @@
   "expo": {
     "name": "ideasPatrimoniales",
     "slug": "ideaspatrimoniales",
-    "version": "1.0.0",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -17,7 +17,7 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.tonchez2700.ideaspatrimoniales"
     },
     "android": {
@@ -30,6 +30,11 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": ""
+    "description": "",
+    "extra": {
+      "eas": {
+        "projectId": "1b6052a8-30fd-449e-9178-f33660e38360"
+      }
+    }
   }
 }

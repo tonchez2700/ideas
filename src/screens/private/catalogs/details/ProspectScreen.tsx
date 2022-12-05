@@ -102,12 +102,11 @@ const ProspectScreen = ({ route, navigation }: Props) => {
                     value={phone}
                 />
                 <View>
-                    <Text style={{ fontSize: 20, marginBottom: 10 }}>Tipo</Text>
                     <DropDownPicker
                         open={open}
                         value={policyType}
                         items={TypeCat}
-                        placeholder="Seleccione una opción"
+                        placeholder="Seleccione un Tipo"
                         placeholderStyle={{color: 'gray'}}
                         setOpen={setOpen}
                         onChangeValue={(value: number | any) => onChange(value, 'policy_type_id')}

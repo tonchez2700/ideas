@@ -28,7 +28,7 @@ export const ProspectsProvider = ({ children }: any) => {
         if (user !== null) {
             loadProspects();
         }
-    }, [prospects])
+    }, [])
 
     const loadProspects = async () => {
         const localStorage = await AsyncStorage.getItem('userIdeas');
@@ -69,9 +69,21 @@ export const ProspectsProvider = ({ children }: any) => {
         }
     }
 
-    const updateProspect = async (id: number, name: string, first_name: string, second_surname: string, phone: number, agentId: number) => { }
+    const updateProspect = async (id: number, name: string, first_name: string, second_surname: string, phone: number, agentId: number) => {
+        
+     }
 
-    const deleteProspect = async (id: number) => { }
+    const deleteProspect = async (id: number) => {
+        try {
+            const localStorage = await AsyncStorage.getItem('userIdeas');
+            const user = localStorage != null ? JSON.parse(localStorage) : null
+            const resp: any = await ideasApi.delete<ProspectsResponse>(`/prospects/${id}`)
+            console.log(resp);
+            
+        } catch (error: any) {
+            console.log(error)
+        }
+    }
 
     const loadProspectById = async (id: number) => {
         throw new Error('Not implemented');

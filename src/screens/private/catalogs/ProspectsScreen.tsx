@@ -1,27 +1,40 @@
 import React, { useEffect, useCallback, useContext, useState } from 'react';
-import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import {
+    FlatList, KeyboardAvoidingView, Platform, StyleSheet, RefreshControl,
+    TouchableOpacity, View, ActivityIndicator, Text
+} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import { AuthContext } from '../../../context/AuthContext';
 import { ProspectsContext } from '../../../context/ProspectsContext';
 import useForm from '../../../hooks/useForm';
 import useFetch from '../../../hooks/useFetch';
-
+import { SwipeListView } from 'react-native-swipe-list-view';
 import { CustomHeader } from '../../../components/Layout/CustomHeader';
 import CustomInput from '../../../components/CustomInput';
 import { CustomContact } from '../../../components/FlatList/CustomContact';
 
 import { Navigation } from '../../../helpers/interfaces/appInterfaces';
 import { colors, general } from '../../../theme/customTheme';
+import { ScrollView } from 'react-native-gesture-handler';
 
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+}
 const ProspectsScreen = ({ navigation }: Navigation) => {
     const { user } = useContext(AuthContext);
-    const { prospects, loadProspects, addPointCall } = useContext(ProspectsContext);
+    const { prospects, loadProspects, addPointCall, deleteProspect } = useContext(ProspectsContext);
     const agentId = user?.id;
 
     const [filterProspects, setFilterProspects] = useState();
     const [searchData, setSearchData] = useState(false);
 
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        wait(200).then(() => setRefreshing(false));
+    }, []);
 
     useEffect(() => {
         loadProspects()
@@ -60,16 +73,35 @@ const ProspectsScreen = ({ navigation }: Navigation) => {
         />
     );
 
+    const renderHiddenItem = (data: any, rowMap: any) => (
+        <View style={styles.rowBack}>
+            <Text>Left</Text>
+            <TouchableOpacity
+                style={[styles.backRightBtn, styles.backRightBtnLeft]}
+                onPress={() => console.log(rowMap, data.item.key)}
+            >
+                <Text style={styles.backTextWhite}>Close</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={[styles.backRightBtn, styles.backRightBtnRight]}
+                onPress={() => deleteProspect(data.if)}
+            >
+                <Text style={styles.backTextWhite}>Delete</Text>
+            </TouchableOpacity>
+        </View>
+    );
     return (
         <KeyboardAvoidingView
             behavior={(Platform.OS === 'ios') ? 'padding' : 'height'}
             style={general.fullScreen}
+
         >
             <CustomHeader
                 isHome={true}
                 navigation={navigation}
                 title='DIRECTORIO'
             />
+
             <View style={general.global_margin}>
                 <CustomInput
                     nameIcon={!searchData ? 'search' : 'close'}
@@ -82,11 +114,22 @@ const ProspectsScreen = ({ navigation }: Navigation) => {
             </View>
             <View style={general.fullScreen}>
                 {prospects.length > 0
-                    ? <FlatList
+                    ? <SwipeListView
                         data={filterProspects ? filterProspects : prospects}
                         renderItem={renderOption}
-                        keyExtractor={item => `${item.id}`}
-                        showsVerticalScrollIndicator={false}
+                        refreshControl={<RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={() => {
+                                loadProspects()
+                                onRefresh()
+                            }
+                            }
+                        />}
+                        rightOpenValue={-150}
+                        previewRowKey={'0'}
+                        previewOpenValue={-40}
+                        previewOpenDelay={3000}
+                        renderHiddenItem={renderHiddenItem}
                     />
                     : <ActivityIndicator size="small" color="#0000ff" />}
             </View>
@@ -156,5 +199,40 @@ const styles = StyleSheet.create({
         shadowColor: colors.black_opacity,
         shadowOffset: { height: 2, width: 0, },
         width: 62,
+    },
+    backTextWhite: {
+        color: colors.white,
+    },
+    rowFront: {
+        alignItems: 'center',
+        backgroundColor: '#CCC',
+        borderBottomColor: 'black',
+        borderBottomWidth: 1,
+        justifyContent: 'center',
+        height: 50,
+    },
+    rowBack: {
+        alignItems: 'center',
+        backgroundColor: '#DDD',
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingLeft: 15,
+    },
+    backRightBtn: {
+        alignItems: 'center',
+        bottom: 0,
+        justifyContent: 'center',
+        position: 'absolute',
+        top: 0,
+        width: 75,
+    },
+    backRightBtnLeft: {
+        backgroundColor: 'blue',
+        right: 75,
+    },
+    backRightBtnRight: {
+        backgroundColor: 'red',
+        right: 0,
     },
 })

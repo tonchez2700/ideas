@@ -43,6 +43,7 @@ export const AuthProvider = ({ children }: any) => {
             
             const { data } = await ideasApi.get<RefreshTokenResponse>('/auth/refreshtoken');
          
+            console.log(data);
             
             if(data.status !== true) {
                 dispatch({ type: 'notAuthenticated' })
@@ -55,6 +56,7 @@ export const AuthProvider = ({ children }: any) => {
                 })
             }
         } catch (error: any) {
+            
             dispatch({ 
                 type: 'addError', 
                 payload: error.response.data.msg || 'Información incorrecta'

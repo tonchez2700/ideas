@@ -267,7 +267,7 @@ const ScheduleCreationScreen = ({ navigation }: Navigation) => {
         return new Date();
     }
 
-    const IosDatePicket = () =>  {
+    const IosDatePicket = () => {
         return (
             <View>
                 <Text style={{ fontSize: 20, marginBottom: 10, textAlign: 'center' }}>Fecha</Text>

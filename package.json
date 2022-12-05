@@ -38,7 +38,7 @@
     "react-native": "0.68.2",
     "react-native-accordion-list-view": "^1.0.4",
     "react-native-autocomplete-input": "^5.1.1",
-    "react-native-calendars": "^1.1285.0",
+    "react-native-calendars": "^1.1275.0",
     "react-native-dropdown-picker": "^5.3.0",
     "react-native-elements": "3.4.2",
     "react-native-gesture-handler": "~2.2.1",
@@ -55,7 +55,7 @@
     "react-native-table-component": "^1.2.2",
     "react-native-vector-icons": "^9.1.0",
     "react-native-web": "0.17.7",
-    "react-navigation-tabs": "^2.11.2",
+    "react-navigation-tabs": "^1.2.0",
     "twrnc": "^3.4.0"
   },
   "devDependencies": {

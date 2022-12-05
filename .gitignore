@@ -104,3 +104,7 @@ dist
 .tern-port
 .DS_Store
 .expo/settings.json
+package-lock.json
+yarn.lock
+.expo/packager-info.json
+.expo/settings.json

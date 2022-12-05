@@ -108,3 +108,4 @@ package-lock.json
 yarn.lock
 .expo/packager-info.json
 .expo/settings.json
+yarn.lock

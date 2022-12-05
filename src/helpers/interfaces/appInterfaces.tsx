@@ -15,6 +15,7 @@ export interface AgentData {
     phone:                  string;
     policy_type_id:         string;
     agent_id:               any;
+    id:                     number;
 }
 
 export interface ScheduleData {

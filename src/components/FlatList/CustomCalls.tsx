@@ -41,27 +41,27 @@ export const CustomCalls = ({ data }: any) => {
                 animationDuration={400}
                 containerStyle={styles.borderCard}
                 customTitle={() =>
-                    <View style={{ flexDirection: 'row', height: '100%' }}>
-                        <View style={{ alignItems: 'center', flexDirection: 'row', height: '100%' }}>
+                    <View style={{ flexDirection: 'row', width: '90%' }}>
+                        <View style={{ alignItems: 'center', flexDirection: 'row', width: '30%' }}>
                             <View style={styles.icon_container}>
                                 <Icon color={colors.primary} name="calendar-alt" size={30} />
                             </View>
-                            <View style={{ paddingVertical: 10 }}>
+                            <View style={{ paddingVertical: 7 }}>
                                 <Text style={styles.info_title}>Llamadas</Text>
                             </View>
                         </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', width: '63%' }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Text style={[styles.info_title, { marginRight: 3 }]}>{data.calls.calls_completed}</Text>
+                        <View style={{ flexDirection: 'row', width: '70%' }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', width: '33.33%', justifyContent: 'flex-end' }}>
+                                <Text style={[styles.info_title, { marginRight: 10 }]}>{data.calls.calls_completed}</Text>
                                 <Icon style={{ paddingVertical: 10, marginRight: 10 }} color={colors.primary} name="check" solid={true} size={20} />
                             </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Text style={[styles.info_title, { marginRight: 3 }]}>{data.calls.calls_calls_goal}</Text>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', width: '33.33%', justifyContent: 'flex-end' }}>
+                                <Text style={[styles.info_title, { marginRight: 10 }]}>{data.calls.calls_calls_goal}</Text>
 
                                 <Icon style={{ paddingVertical: 10, marginRight: 10 }} color={colors.primary} name="flag" solid={true} size={20} />
                             </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Text style={[styles.info_title, { marginRight: 3 }]}>{Math.floor(data.calls.calls_percentage)}%</Text>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', width: '33.33%', justifyContent: 'flex-end' }}>
+                                <Text style={[styles.info_title, { marginRight: 10 }]}>{Math.floor(data.calls.calls_percentage)}%</Text>
                                 <Icon style={{ paddingVertical: 10, marginRight: 10 }} color={colorsState()} name="circle" solid={true} size={20} />
                             </View>
                         </View>

@@ -10,7 +10,7 @@ type ProspectsContextProps = {
     prospects: ProspectsResponse[];
     loadProspects: () => Promise<void>;
     addProspect: (AgentData: AgentData) => Promise<void>;
-    updateProspect: (id: number, name: string, first_name: string, second_surname: string, phone: number, agentId: number) => Promise<void>;
+    updateProspect: (AgentData: AgentData) => Promise<void>;
     deleteProspect: (id: number) => Promise<void>;
     addPointCall: (date: Date, prospect_id: number, call_type_id: number,) => void;
     loadProspectById: (id: number) => Promise<ProspectsResponse>;
@@ -60,7 +60,6 @@ export const ProspectsProvider = ({ children }: any) => {
         try {
             const localStorage = await AsyncStorage.getItem('userIdeas');
             const user = localStorage != null ? JSON.parse(localStorage) : null
-            console.log(name, first_name, second_surname, phone, policy_type_id, user.agent_id);
             const resp: any = await ideasApi.post<ProspectsResponse>('/prospects', { name, first_name, second_surname, phone, agent_id: user.agent_id, policy_type_id })
 
             setProspects([...prospects, resp.data])
@@ -69,17 +68,23 @@ export const ProspectsProvider = ({ children }: any) => {
         }
     }
 
-    const updateProspect = async (id: number, name: string, first_name: string, second_surname: string, phone: number, agentId: number) => {
-        
-     }
+    const updateProspect = async ({ name, first_name, second_surname, phone, policy_type_id, id }: AgentData) => {
+        try {
+            const localStorage = await AsyncStorage.getItem('userIdeas');
+            const user = localStorage != null ? JSON.parse(localStorage) : null
+            const resp: any = await ideasApi.put<ProspectsResponse>(`/prospects/${id}`, { name, first_name, second_surname, phone, agent_id: user.agent_id, policy_type_id })
+        } catch (error: any) {
+            console.log(error)
+        }
+
+    }
 
     const deleteProspect = async (id: number) => {
+
         try {
             const localStorage = await AsyncStorage.getItem('userIdeas');
             const user = localStorage != null ? JSON.parse(localStorage) : null
             const resp: any = await ideasApi.delete<ProspectsResponse>(`/prospects/${id}`)
-            console.log(resp);
-            
         } catch (error: any) {
             console.log(error)
         }

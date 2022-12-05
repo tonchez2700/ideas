@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useContext, useState } from 'react';
 import {
     FlatList, KeyboardAvoidingView, Platform, StyleSheet, RefreshControl,
-    TouchableOpacity, View, ActivityIndicator, Text
+    TouchableOpacity, View, ActivityIndicator, Text, Alert
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
@@ -18,7 +18,7 @@ import { Navigation } from '../../../helpers/interfaces/appInterfaces';
 import { colors, general } from '../../../theme/customTheme';
 import { ScrollView } from 'react-native-gesture-handler';
 
-const wait = (timeout) => {
+const wait = (timeout: any) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
 }
 const ProspectsScreen = ({ navigation }: Navigation) => {
@@ -75,18 +75,31 @@ const ProspectsScreen = ({ navigation }: Navigation) => {
 
     const renderHiddenItem = (data: any, rowMap: any) => (
         <View style={styles.rowBack}>
-            <Text>Left</Text>
             <TouchableOpacity
                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                onPress={() => console.log(rowMap, data.item.key)}
+                onPress={() => navigation.navigate('ProspectEditScreen', data.item)}
             >
-                <Text style={styles.backTextWhite}>Close</Text>
+                <Text style={styles.backTextWhite}>Editar</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={[styles.backRightBtn, styles.backRightBtnRight]}
-                onPress={() => deleteProspect(data.if)}
+                onPress={() => {
+                    Alert.alert(
+                        "Alerta",
+                        "Estas seguro que desea ELIMINAR el contacto?",
+                        [
+                            {
+                                text: "No",
+                            },
+                            {
+                                text: "Si",
+                                onPress: () => deleteProspect(data.item.id),
+                            }
+                        ]
+                    );
+                }}
             >
-                <Text style={styles.backTextWhite}>Delete</Text>
+                <Text style={styles.backTextWhite}>Eliminar</Text>
             </TouchableOpacity>
         </View>
     );
@@ -120,11 +133,12 @@ const ProspectsScreen = ({ navigation }: Navigation) => {
                         refreshControl={<RefreshControl
                             refreshing={refreshing}
                             onRefresh={() => {
-                                loadProspects()
-                                onRefresh()
+                                loadProspects(),
+                                    onRefresh()
                             }
                             }
                         />}
+                        disableRightSwipe
                         rightOpenValue={-150}
                         previewRowKey={'0'}
                         previewOpenValue={-40}
@@ -206,8 +220,6 @@ const styles = StyleSheet.create({
     rowFront: {
         alignItems: 'center',
         backgroundColor: '#CCC',
-        borderBottomColor: 'black',
-        borderBottomWidth: 1,
         justifyContent: 'center',
         height: 50,
     },
@@ -221,14 +233,14 @@ const styles = StyleSheet.create({
     },
     backRightBtn: {
         alignItems: 'center',
-        bottom: 0,
+        height: '99%',
         justifyContent: 'center',
         position: 'absolute',
         top: 0,
         width: 75,
     },
     backRightBtnLeft: {
-        backgroundColor: 'blue',
+        backgroundColor: 'gray',
         right: 75,
     },
     backRightBtnRight: {

@@ -12,6 +12,7 @@ import BinacleScreen from '../screens/private/catalogs/BinacleScreen';
 import RequestScreen from '../screens/private/RequestScreen';
 import ScoreScreen from '../screens/private/ScoreScreen';
 import LibraryScreen from '../screens/private/catalogs/LibraryScreen';
+import ProspectEditScreen from '../screens/private/catalogs/details/ProspectEditScreen';
 
 import ProspectScreen from '../screens/private/catalogs/details/ProspectScreen';
 import BinacleDetailScreen from '../screens/private/catalogs/details/BinacleDetailScreen';
@@ -29,14 +30,14 @@ const LibraryStack = () => {
   return (
     <StackLibrary.Navigator initialRouteName='LibraryScreen'>
       <StackLibrary.Screen
-        component={ LibraryScreen }
+        component={LibraryScreen}
         name='Library'
-        options={ navOptionHandler }
+        options={navOptionHandler}
       />
       <StackLibrary.Screen
-        component={ LibraryDetailScreen }
+        component={LibraryDetailScreen}
         name='LibraryDetail'
-        options={ navOptionHandler }
+        options={navOptionHandler}
       />
     </StackLibrary.Navigator>
   )
@@ -45,6 +46,7 @@ const LibraryStack = () => {
 export type ProductsStackParams = {
   ProspectsScreen: undefined,
   ProspectScreen: { id?: number, name?: string }
+  ProspectEditScreen: { id?: number, name?: string }
 }
 
 const StackDirectory = createNativeStackNavigator<ProductsStackParams>();
@@ -53,14 +55,19 @@ const DirectoryStack = () => {
   return (
     <StackDirectory.Navigator>
       <StackDirectory.Screen
-        component={ ProspectsScreen }
+        component={ProspectsScreen}
         name='ProspectsScreen'
-        options={ navOptionHandler }
+        options={navOptionHandler}
       />
       <StackDirectory.Screen
-        component={ ProspectScreen }
+        component={ProspectScreen}
         name='ProspectScreen'
-        options={ navOptionHandler }
+        options={navOptionHandler}
+      />
+      <StackDirectory.Screen
+        component={ProspectEditScreen}
+        name='ProspectEditScreen'
+        options={navOptionHandler}
       />
     </StackDirectory.Navigator>
   )
@@ -72,14 +79,14 @@ const BinacleStack = () => {
   return (
     <StackBinacle.Navigator initialRouteName='BinacleScreen'>
       <StackBinacle.Screen
-        component={ BinacleScreen }
+        component={BinacleScreen}
         name='Binacle'
-        options={ navOptionHandler }
+        options={navOptionHandler}
       />
       <StackBinacle.Screen
-        component={ BinacleDetailScreen }
+        component={BinacleDetailScreen}
         name='BinacleDetail'
-        options={ navOptionHandler }
+        options={navOptionHandler}
       />
     </StackBinacle.Navigator>
   )
@@ -89,14 +96,14 @@ const ScheduleStack = () => {
   return (
     <StackBinacle.Navigator initialRouteName='ScheduleScreen'>
       <StackBinacle.Screen
-        component={ ScheduleScreen }
+        component={ScheduleScreen}
         name='ScheduleList'
-        options={ navOptionHandler }
+        options={navOptionHandler}
       />
       <StackBinacle.Screen
-        component={ ScheduleCreationScreen }
+        component={ScheduleCreationScreen}
         name='ScheduleCreation'
-        options={ navOptionHandler }
+        options={navOptionHandler}
       />
     </StackBinacle.Navigator>
   )
@@ -107,7 +114,7 @@ const Drawer = createDrawerNavigator();
 const DrawerNavigator = () => {
   return (
     <Drawer.Navigator
-      drawerContent={ (props) => <CustomDrawer { ...props } /> }
+      drawerContent={(props) => <CustomDrawer {...props} />}
       screenOptions={{
         drawerActiveBackgroundColor: colors.primary,
         drawerInactiveBackgroundColor: colors.white,
@@ -117,13 +124,13 @@ const DrawerNavigator = () => {
       }}
       useLegacyImplementation
     >
-      <Drawer.Screen name='Dashboard' component={ DashboardScreen } />
-      <Drawer.Screen name='Directorio' component={ DirectoryStack } />
-      <Drawer.Screen name='Agenda' component={ ScheduleStack } />
-      <Drawer.Screen name='Bitácora' component={ BinacleStack } />
-      <Drawer.Screen name='Póliza' component={ RequestScreen } />
-      <Drawer.Screen name='Top 10' component={ ScoreScreen } />
-      <Drawer.Screen name='Biblioteca' component={ LibraryStack } />
+      <Drawer.Screen name='Dashboard' component={DashboardScreen} />
+      <Drawer.Screen name='Directorio' component={DirectoryStack} />
+      <Drawer.Screen name='Agenda' component={ScheduleStack} />
+      <Drawer.Screen name='Bitácora' component={BinacleStack} />
+      <Drawer.Screen name='Póliza' component={RequestScreen} />
+      <Drawer.Screen name='Top 10' component={ScoreScreen} />
+      <Drawer.Screen name='Biblioteca' component={LibraryStack} />
     </Drawer.Navigator>
   );
 }

@@ -77,8 +77,8 @@ export const AuthProvider = ({ children }: any) => {
             });
 
             if(data.token !== null) {
-                await AsyncStorage.setItem('token', data.token);
                 await AsyncStorage.setItem('userIdeas', JSON.stringify(data.user));
+                await AsyncStorage.setItem('token', data.token);
             }
         } catch(error: any) {
             dispatch({

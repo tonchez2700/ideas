@@ -41,18 +41,16 @@ export const ScheduleProvider = ({ children }: any ) => {
             const { data }: any = await ideasApi.get<ScheduleResponse>(`/appointments`, {
                 params: { agent_id: user.agent_id }
             });
-            if(data.length > 0){
-                const schedules: AgendaScheduleDataType = getAgendaScheduleFormatByAppointmentsResponse(data)
-                dispatch({
-                    type: 'schedule/set_appointments',
-                    payload: { 
-                        appointments: data,
-                        agenda: { schedules }
-                    }
-                });
-            }else{
-                throw "No se encontraron tareas disponibles."
-            }
+           
+            const schedules: AgendaScheduleDataType = getAgendaScheduleFormatByAppointmentsResponse(data)
+            dispatch({
+                type: 'schedule/set_appointments',
+                payload: { 
+                    appointments: data,
+                    agenda: { schedules }
+                }
+            });
+
         } catch (e) {
             dispatch({
                 type: 'schedule/set_error',

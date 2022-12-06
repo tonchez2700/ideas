@@ -38,7 +38,8 @@ const ProspectsScreen = ({ navigation }: Navigation) => {
 
     useEffect(() => {
         loadProspects()
-    }, [])
+
+    }, [navigation])
 
     const { search, onChange } = useForm({
         search: '',
@@ -93,7 +94,10 @@ const ProspectsScreen = ({ navigation }: Navigation) => {
                             },
                             {
                                 text: "Si",
-                                onPress: () => deleteProspect(data.item.id),
+                                onPress: () => {
+                                    deleteProspect(data.item.id),
+                                    loadProspects()
+                                }
                             }
                         ]
                     );

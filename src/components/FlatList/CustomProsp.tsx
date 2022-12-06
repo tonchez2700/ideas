@@ -47,7 +47,7 @@ export const CustomProsp = ({ data }: any) => {
                                 <Icon color={colors.primary} name="calendar-alt" size={30} />
                             </View>
                             <View style={{ paddingVertical: 7 }}>
-                                <Text style={styles.info_title}>Prospectos</Text>
+                                <Text style={styles.info_title}>Prospecto</Text>
                             </View>
                         </View>
                         <View style={{ flexDirection: 'row', width: '70%' }}>

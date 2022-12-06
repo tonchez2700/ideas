@@ -100,26 +100,24 @@ const ProspectEditScreen = ({ route, navigation }: Props) => {
                     placeholder='Teléfono'
                     value={phone}
                 />
-                <View>
-                    <DropDownPicker
-                        open={open}
-                        value={policyType}
-                        items={TypeCat}
-                        placeholder="Seleccione un Tipo"
-                        placeholderStyle={{ color: 'gray' }}
-                        setOpen={setOpen}
-                        onChangeValue={(value: number | any) => onChange(value, 'policy_type_id')}
-                        setValue={setPolicyType}
-                        style={{
-                            borderColor: 'transparent',
-                            marginBottom: 20,
-                        }}
-                        textStyle={{
-                            fontSize: 20,
-                            color: '#23233C'
-                        }}
-                    />
-                </View>
+                <DropDownPicker
+                    open={open}
+                    value={policyType}
+                    items={TypeCat}
+                    placeholder="Seleccione un Tipo"
+                    placeholderStyle={{ color: 'gray' }}
+                    setOpen={setOpen}
+                    onChangeValue={(value: number | any) => onChange(value, 'policy_type_id')}
+                    setValue={setPolicyType}
+                    style={{
+                        borderColor: 'transparent',
+                        marginBottom: 20,
+                    }}
+                    textStyle={{
+                        fontSize: 20,
+                        color: '#23233C'
+                    }}
+                />
                 <CustomButton
                     onPress={() => navigation.goBack()}
                     title='Cancelar'
